@@ -50,7 +50,7 @@ input {
 <input type="password" id="password" placeholder="Password"><br>
 <button onclick="signup()">Signup</button>
 <button onclick="login()">Login</button>
-<button onclick="googleLogin()">Google Login</button>
+<button onclick="googleLogin()">Login with Google</button>
 </div>
 
 <!-- USERNAME -->
@@ -83,20 +83,25 @@ input {
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
 import { getDatabase, ref, push, onValue, set, get } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, onAuthStateChanged, signOut, signInWithRedirect, getRedirectResult } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDgjlWP9Ovp8lI-aS5ypaLUfb1by0ttejY",
   authDomain: "intier-gaming.firebaseapp.com",
   databaseURL: "https://intier-gaming-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "intier-gaming",
+  projectId: "intier-gaming"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
 
-let user=null, points=0, current=0;
+let user = null;
+let points = 0;
+let current = 0;
+
+// ✅ FIX GOOGLE REDIRECT RESULT
+getRedirectResult(auth).catch(()=>{});
 
 const questions = [
  {q:"2+2?", options:["3","4","5"], answer:"4"},
@@ -106,7 +111,7 @@ const questions = [
 
 onAuthStateChanged(auth, async(u)=>{
  if(u){
-  user=u;
+  user = u;
   checkUsername();
  } else {
   show("login");
@@ -121,7 +126,7 @@ function show(id){
 }
 
 async function checkUsername(){
- const snap=await get(ref(db,"users/"+user.uid));
+ const snap = await get(ref(db,"users/"+user.uid));
  if(snap.exists()){
   document.getElementById("welcome").innerText="Welcome "+snap.val().username;
   show("home");
@@ -130,61 +135,60 @@ async function checkUsername(){
  }
 }
 
-window.signup=async()=>{
+// EMAIL AUTH
+window.signup = async ()=>{
  try{
   await createUserWithEmailAndPassword(auth,email.value,password.value);
  }catch(e){
-  alert("Signup error: "+e.message);
+  alert(e.message);
  }
 }
 
-window.login=async()=>{
+window.login = async ()=>{
  try{
   await signInWithEmailAndPassword(auth,email.value,password.value);
  }catch(e){
-  alert("Login error: "+e.message);
+  alert(e.message);
  }
 }
 
-window.googleLogin=async()=>{
+// ✅ GOOGLE LOGIN (FIXED)
+window.googleLogin = async ()=>{
  try{
-  const provider=new GoogleAuthProvider();
-  await signInWithPopup(auth,provider);
+  const provider = new GoogleAuthProvider();
+  await signInWithRedirect(auth, provider);
  }catch(e){
-  alert("Google error: "+e.message);
+  alert(e.message);
  }
 }
 
-window.logout=()=>signOut(auth);
+window.logout = ()=>signOut(auth);
 
-// ✅ USERNAME VALIDATION FIX
-window.saveUsername=async()=>{
- let uname=document.getElementById("username").value.trim();
+// USERNAME SYSTEM
+window.saveUsername = async ()=>{
+ let uname = username.value.trim();
 
- // auto add @
- if(!uname.startsWith("@")) uname="@"+uname;
+ if(!uname.startsWith("@")) uname = "@"+uname;
 
- // no spaces
  if(uname.includes(" ")){
-  alert("No spaces allowed!");
+  alert("No spaces allowed");
   return;
  }
 
- // allowed chars
- if(!/^@[a-zA-Z0-9_@!#$%^&*]+$/.test(uname)){
-  alert("Invalid characters!");
+ if(!/^@[a-zA-Z0-9_]+$/.test(uname)){
+  alert("Only letters, numbers, _ allowed");
   return;
  }
 
- const check=await get(ref(db,"usernames/"+uname));
+ const check = await get(ref(db,"usernames/"+uname));
  if(check.exists()){
-  alert("Username taken!");
+  alert("Username already taken");
   return;
  }
 
  await set(ref(db,"users/"+user.uid),{
-  username:uname,
-  score:0
+  username: uname,
+  score: 0
  });
 
  await set(ref(db,"usernames/"+uname),user.uid);
@@ -192,25 +196,27 @@ window.saveUsername=async()=>{
  checkUsername();
 }
 
-window.startQuiz=()=>{
- points=0; current=0;
+// GAME
+window.startQuiz = ()=>{
+ points=0;
+ current=0;
  show("game");
  showQuestion();
 }
 
 function showQuestion(){
  let q=questions[current];
- document.getElementById("question").innerText=q.q;
+ question.innerText=q.q;
 
  let html="";
  q.options.forEach(opt=>{
   html+=`<button onclick="checkAnswer('${opt}')">${opt}</button>`;
  });
 
- document.getElementById("options").innerHTML=html;
+ options.innerHTML=html;
 }
 
-window.checkAnswer=async(ans)=>{
+window.checkAnswer = async(ans)=>{
  if(ans===questions[current].answer) points+=25;
 
  current++;
@@ -218,24 +224,26 @@ window.checkAnswer=async(ans)=>{
  if(current<questions.length){
   showQuestion();
  } else {
-  document.getElementById("question").innerText="🎉 Finished!";
-  document.getElementById("options").innerHTML="";
+  question.innerText="🎉 Finished!";
+  options.innerHTML="";
   await push(ref(db,"leaderboard"),{
-    uid:user.uid,score:points
+    uid:user.uid,
+    score:points
   });
  }
 
- document.getElementById("score").innerText="Points: "+points;
+ score.innerText="Points: "+points;
 }
 
-// leaderboard
+// LEADERBOARD
 onValue(ref(db,"leaderboard"),snap=>{
  let html="";
  snap.forEach(child=>{
   html+=`<li>${child.val().score}</li>`;
  });
- document.getElementById("leaderboard").innerHTML=html;
+ leaderboard.innerHTML=html;
 });
+
 </script>
 
 </body>
