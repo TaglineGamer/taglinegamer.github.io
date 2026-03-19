@@ -172,6 +172,18 @@
   .gift-inp-wrap label { font-size:11px; font-weight:700; letter-spacing:1.5px; color:var(--muted); display:block; margin-bottom:6px; text-transform:uppercase; }
   .gift-inp { width:100%; background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:11px 12px; color:var(--text); font-family:'Rajdhani',sans-serif; font-size:15px; outline:none; transition:border-color 0.2s; }
   .gift-inp:focus { border-color:var(--gold); }
+  .notif-page{position:fixed;inset:0;background:var(--bg);z-index:990;display:none;overflow-y:auto;}
+.notif-page.open{display:block;}
+.notif-inner{max-width:480px;margin:0 auto;padding:70px 16px 30px;}
+.notif-item{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:10px;position:relative;overflow:hidden;}
+.notif-item::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2));}
+.notif-item.approved::before{background:linear-gradient(90deg,var(--green),#00897b);}
+.notif-item.rejected::before{background:linear-gradient(90deg,var(--accent2),#c51162);}
+.notif-item.pending::before{background:linear-gradient(90deg,var(--gold),#f57f17);}
+.notif-item h4{font-family:'Orbitron',monospace;font-size:13px;font-weight:700;color:#fff;margin-bottom:6px;}
+.notif-item p{font-size:13px;color:var(--muted);margin-bottom:4px;}
+.notif-badge{position:absolute;top:-4px;right:-4px;background:var(--accent2);color:#fff;border-radius:50%;width:18px;height:18px;font-size:10px;font-weight:900;display:flex;align-items:center;justify-content:center;}
+.notif-btn-wrap{position:relative;display:inline-flex;}
 </style>
 </head>
 <body>
