@@ -167,6 +167,22 @@
   .status-pending { background:rgba(255,214,0,0.12); border:1px solid rgba(255,214,0,0.3); color:var(--gold); }
   .status-approved { background:rgba(0,230,118,0.12); border:1px solid rgba(0,230,118,0.3); color:var(--green); }
   .status-rejected { background:rgba(255,61,113,0.1); border:1px solid rgba(255,61,113,0.3); color:var(--accent2); }
+  .gift-section { background:var(--bg3); border:1px solid var(--border); border-radius:14px; padding:18px; margin-bottom:20px; }
+.gift-section h3 { font-family:'Orbitron',monospace; font-size:14px; font-weight:700; color:var(--gold); margin-bottom:14px; letter-spacing:1px; }
+.gift-row { display:flex; gap:10px; align-items:flex-end; }
+.gift-inp-wrap { flex:1; }
+.gift-inp-wrap label { font-size:11px; font-weight:700; letter-spacing:1.5px; color:var(--muted); display:block; margin-bottom:6px; text-transform:uppercase; }
+.gift-inp { width:100%; background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:11px 12px; color:var(--text); font-family:'Rajdhani',sans-serif; font-size:15px; outline:none; transition:border-color 0.2s; }
+.gift-inp:focus { border-color:var(--gold); }
+.gift-inp::placeholder { color:var(--muted); }
+.btn-gift { padding:11px 16px; border-radius:10px; border:none; background:linear-gradient(135deg,var(--gold),#f57f17); color:#080c14; font-family:'Rajdhani',sans-serif; font-size:14px; font-weight:800; letter-spacing:1px; cursor:pointer; white-space:nowrap; transition:all 0.2s; }
+.btn-gift:hover { opacity:0.88; }
+.gift-result { margin-top:10px; font-size:13px; font-weight:600; padding:9px 12px; border-radius:8px; display:none; }
+.gift-result.ok  { display:block; background:rgba(0,230,118,0.1); border:1px solid rgba(0,230,118,0.3); color:var(--green); }
+.gift-result.bad { display:block; background:rgba(255,61,113,0.1); border:1px solid rgba(255,61,113,0.3); color:var(--accent2); }
+.gift-log-item { background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:12px; margin-bottom:8px; }
+.gift-log-item h5 { font-family:'Orbitron',monospace; font-size:12px; color:var(--gold); margin-bottom:4px; }
+.gift-log-item p { font-size:12px; color:var(--muted); }
 </style>
 </head>
 <body>
