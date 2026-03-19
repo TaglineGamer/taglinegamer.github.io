@@ -370,27 +370,13 @@ function listenScore(){
 
 // ── LEADERBOARD (only starts after login) ──
 function startLeaderboard(){
-  if(lbStarted)return;
-  lbStarted=true;
-  onValue(ref(db,"leaderboard"),snap=>{
-    const rows=[];
-    snap.forEach(c=>rows.push({uid:c.key,...c.val()}));
-    rows.sort((a,b)=>b.score-a.score);
-    if(user){
-      const idx=rows.findIndex(r=>r.uid===user.uid);
-      document.getElementById("pRank").textContent=idx>=0?"#"+(idx+1):"#—";
+  document.getElementById("leaderboard").innerHTML=`
+    <div style="text-align:center;padding:30px 10px;">
+      <div style="font-size:40px;margin-bottom:12px;">🚧</div>
+      <div style="font-family:'Orbitron',monospace;font-size:16px;font-weight:900;color:var(--accent);letter-spacing:2px;margin-bottom:8px;">COMING SOON</div>
+      <p style="color:var(--muted);font-size:13px;">Leaderboard is currently under construction.<br>Keep playing and earning points!</p>
+    </div>`;
     }
-    const medals=["🥇","🥈","🥉"];
-    document.getElementById("leaderboard").innerHTML=rows.length
-      ? rows.map((r,i)=>`
-          <div class="lb-row">
-            <div class="lb-rank">${i<3?medals[i]:i+1}</div>
-            <div class="lb-name" style="${user&&r.uid===user.uid?"color:var(--accent)":""}">${r.username}${user&&r.uid===user.uid?" ★":""}</div>
-            <div class="lb-score">${r.score}</div>
-          </div>`).join("")
-      : `<p style="color:var(--muted);text-align:center;padding:20px;">No scores yet. Be the first!</p>`;
-  });
-}
 
 const questions=[
   {q:"What is the capital of France?",opts:["Berlin","Madrid","Paris","Rome"],ans:"Paris"},
