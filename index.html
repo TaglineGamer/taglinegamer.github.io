@@ -15,8 +15,6 @@ body {
 .header {
   padding: 15px;
   background: #020617;
-  font-size: 22px;
-  color: #22c55e;
   display: flex;
   justify-content: space-between;
 }
@@ -78,43 +76,37 @@ input {
   <p onclick="openProfile()">Profile</p>
 </div>
 
-<!-- LOGIN -->
 <div class="card" id="login">
   <h2>Login / Sign Up</h2>
   <input type="email" id="email" placeholder="Email">
   <input type="password" id="password" placeholder="Password">
   <button onclick="signup()">Sign Up</button>
-  <button onclick="login()">Login</button>
+  <button onclick="loginUser()">Login</button>
 </div>
 
-<!-- USERNAME -->
 <div class="card hidden" id="usernameBox">
   <h2>Create Username</h2>
   <input id="usernameInput" placeholder="username">
   <button onclick="saveUsername()">Save Username</button>
 </div>
 
-<!-- MAIN -->
 <div class="card hidden" id="main">
   <h2 id="welcome"></h2>
   <button onclick="startQuiz()">▶ Start Quiz</button>
   <p id="timer"></p>
 </div>
 
-<!-- GAME -->
 <div class="card hidden" id="game">
   <h3 id="question"></h3>
   <div id="options"></div>
   <p id="score"></p>
 </div>
 
-<!-- LEADERBOARD -->
 <div class="card">
   <h3>🏆 Leaderboard</h3>
   <ul id="leaderboard"></ul>
 </div>
 
-<!-- PROFILE -->
 <div id="profilePage" class="profilePage">
   <h2>Profile</h2>
   <p id="pEmail"></p>
@@ -139,11 +131,11 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-const auth = getAuth();
+const auth = getAuth(app);
 
-let user, points=0, current=0;
+let user=null, points=0, current=0;
 
-const questions = [
+const questions=[
   {q:"2+2?", options:["3","4","5"], answer:"4"},
   {q:"Capital of India?", options:["Delhi","Mumbai"], answer:"Delhi"}
 ];
@@ -153,8 +145,8 @@ onAuthStateChanged(auth, async(u)=>{
     user=u;
     login.classList.add("hidden");
 
-    let snap = await get(ref(db,"users/"+user.uid));
-    let data = snap.val();
+    let snap=await get(ref(db,"users/"+user.uid));
+    let data=snap.val();
 
     if(!data?.username){
       usernameBox.classList.remove("hidden");
@@ -174,9 +166,28 @@ function startMain(data){
   pScore.innerText="Score: "+(data.score||0);
 }
 
-window.signup=()=>createUserWithEmailAndPassword(auth,email.value,password.value);
-window.login=()=>signInWithEmailAndPassword(auth,email.value,password.value);
+/* AUTH */
+window.signup=async()=>{
+  try{
+    await createUserWithEmailAndPassword(auth,email.value,password.value);
+    alert("Signup successful");
+  }catch(e){
+    alert(e.message);
+  }
+};
 
+window.loginUser=async()=>{
+  try{
+    await signInWithEmailAndPassword(auth,email.value,password.value);
+    alert("Login successful");
+  }catch(e){
+    alert(e.message);
+  }
+};
+
+window.logout=()=>signOut(auth);
+
+/* USERNAME */
 window.saveUsername=async()=>{
   let uname=usernameInput.value.trim();
   if(uname.includes(" ")) return alert("No spaces allowed");
@@ -197,6 +208,7 @@ window.saveUsername=async()=>{
   startMain({username:uname,score:0});
 };
 
+/* GAME */
 window.startQuiz=()=>{
   points=0; current=0;
   main.classList.add("hidden");
@@ -243,6 +255,7 @@ window.answer=async(ans)=>{
   score.innerText="Points: "+points;
 };
 
+/* LEADERBOARD */
 function loadLeaderboard(){
   onValue(ref(db,"leaderboard"), snap=>{
     let html="";
@@ -272,7 +285,6 @@ window.toggleMenu=()=>menuBox.classList.toggle("hidden");
 window.openProfile=()=>profilePage.style.display="block";
 window.closeProfile=()=>profilePage.style.display="none";
 window.goHome=()=>profilePage.style.display="none";
-window.logout=()=>signOut(auth);
 
 </script>
 
