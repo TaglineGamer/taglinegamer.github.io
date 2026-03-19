@@ -12,19 +12,15 @@ body {
   color:white;
   text-align:center;
 }
-
-/* TOP BAR */
 .topbar{
   display:flex;
   justify-content:space-between;
   padding:10px;
 }
-.menu, .profileIcon{
+.menu,.profileIcon{
   font-size:22px;
   cursor:pointer;
 }
-
-/* MENU */
 .menuBox{
   position:absolute;
   top:50px;
@@ -34,16 +30,14 @@ body {
   border-radius:10px;
   display:none;
 }
-
-/* CARD */
-.card {
+.card{
   background:#1e293b;
   padding:20px;
   border-radius:15px;
   margin:20px auto;
   max-width:400px;
 }
-button {
+button{
   width:80%;
   padding:12px;
   margin:8px;
@@ -52,27 +46,26 @@ button {
   background:#22c55e;
   color:white;
 }
-input {
+input{
   padding:10px;
   width:80%;
   border-radius:10px;
   border:none;
   margin:10px;
 }
-.hidden {display:none;}
+.hidden{display:none;}
 </style>
 </head>
 
 <body>
 
-<!-- TOP BAR -->
+<!-- TOP -->
 <div class="topbar">
   <div class="menu" onclick="toggleMenu()">☰</div>
   <div>🎮 Intier Gaming</div>
   <div class="profileIcon" onclick="openProfile()">👤</div>
 </div>
 
-<!-- MENU -->
 <div class="menuBox" id="menuBox">
   <p onclick="goHome()">🏠 Home</p>
   <p onclick="openProfile()">👤 Profile</p>
@@ -125,7 +118,7 @@ input {
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-import { getDatabase, ref, push, onValue, set, get, update } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
+import { getDatabase, ref, set, get, onValue, update } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -139,14 +132,10 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
 
-let user=null;
-let points=0;
-let current=0;
+let user=null,points=0,current=0;
 
 // MENU
-window.toggleMenu=()=>{
- menuBox.style.display = menuBox.style.display==="block"?"none":"block";
-}
+window.toggleMenu=()=>menuBox.style.display=menuBox.style.display==="block"?"none":"block";
 
 // UI
 function show(id){
@@ -157,52 +146,42 @@ function show(id){
 }
 
 // AUTH
-onAuthStateChanged(auth, async(u)=>{
- if(u){
-  user=u;
-  checkUsername();
- } else {
-  show("login");
- }
+onAuthStateChanged(auth,async(u)=>{
+ if(u){user=u;checkUsername();}
+ else show("login");
 });
 
 // USERNAME CHECK
 async function checkUsername(){
  const snap=await get(ref(db,"users/"+user.uid));
  if(snap.exists()){
-  const data=snap.val();
-  welcome.innerText="Welcome "+data.username;
+  welcome.innerText="Welcome "+snap.val().username;
   show("home");
- } else {
-  show("usernameCard");
- }
+ } else show("usernameCard");
 }
 
 // AUTH FUNCTIONS
 window.signup=async()=>{
- try{
-  await createUserWithEmailAndPassword(auth,email.value,password.value);
- }catch(e){alert(e.message)}
+ try{await createUserWithEmailAndPassword(auth,email.value,password.value);}
+ catch(e){alert(e.message);}
 }
 
 window.login=async()=>{
- try{
-  await signInWithEmailAndPassword(auth,email.value,password.value);
- }catch(e){alert(e.message)}
+ try{await signInWithEmailAndPassword(auth,email.value,password.value);}
+ catch(e){alert(e.message);}
 }
 
 window.logout=()=>signOut(auth);
 
-// USERNAME SAVE
+// USERNAME
 window.saveUsername=async()=>{
  let uname=username.value.trim();
  if(!uname.startsWith("@")) uname="@"+uname;
-
- if(uname.includes(" ")){alert("No spaces");return;}
- if(!/^@[a-zA-Z0-9_]+$/.test(uname)){alert("Invalid");return;}
+ if(uname.includes(" ")) return alert("No spaces allowed");
+ if(!/^@[a-zA-Z0-9_]+$/.test(uname)) return alert("Invalid username");
 
  const check=await get(ref(db,"usernames/"+uname));
- if(check.exists()){alert("Taken");return;}
+ if(check.exists()) return alert("Taken");
 
  await set(ref(db,"users/"+user.uid),{
   username:uname,
@@ -211,19 +190,16 @@ window.saveUsername=async()=>{
  });
 
  await set(ref(db,"usernames/"+uname),user.uid);
-
  checkUsername();
 }
 
 // PROFILE
 window.openProfile=async()=>{
  const snap=await get(ref(db,"users/"+user.uid));
- const data=snap.val();
-
- pEmail.innerText="Email: "+data.email;
- pUsername.innerText="Username: "+data.username;
- pScore.innerText="Points: "+data.score;
-
+ const d=snap.val();
+ pEmail.innerText="Email: "+d.email;
+ pUsername.innerText="Username: "+d.username;
+ pScore.innerText="Points: "+d.score;
  show("profile");
 }
 
@@ -237,8 +213,7 @@ const questions=[
 ];
 
 window.startQuiz=()=>{
- points=0;
- current=0;
+ points=0;current=0;
  show("game");
  showQuestion();
 }
@@ -246,36 +221,28 @@ window.startQuiz=()=>{
 function showQuestion(){
  let q=questions[current];
  question.innerText=q.q;
-
- let html="";
- q.options.forEach(opt=>{
-  html+=`<button onclick="checkAnswer('${opt}')">${opt}</button>`;
- });
-
- options.innerHTML=html;
+ options.innerHTML=q.options.map(o=>`<button onclick="checkAnswer('${o}')">${o}</button>`).join("");
 }
 
 window.checkAnswer=async(ans)=>{
  if(ans===questions[current].answer) points+=25;
  current++;
 
- if(current<questions.length){
-  showQuestion();
- } else {
+ if(current<questions.length) showQuestion();
+ else{
   question.innerText="🎉 Finished!";
   options.innerHTML="";
 
   const snap=await get(ref(db,"users/"+user.uid));
-  const data=snap.val();
+  const d=snap.val();
+  let newScore=(d.score||0)+points;
 
-  let newScore=(data.score||0)+points;
+  // UPDATE USER SCORE
+  await update(ref(db,"users/"+user.uid),{score:newScore});
 
-  await update(ref(db,"users/"+user.uid),{
-    score:newScore
-  });
-
-  await push(ref(db,"leaderboard"),{
-    username:data.username,
+  // ANTI-CHEAT LEADERBOARD
+  await set(ref(db,"leaderScores/"+user.uid),{
+    username:d.username,
     score:newScore
   });
  }
@@ -285,38 +252,25 @@ window.checkAnswer=async(ans)=>{
 
 // LEADERBOARD
 function loadLeaderboard(){
- onValue(ref(db,"leaderboard"),snap=>{
+ onValue(ref(db,"leaderScores"),snap=>{
   let arr=[];
-  snap.forEach(child=>arr.push(child.val()));
-
+  snap.forEach(c=>arr.push(c.val()));
   arr.sort((a,b)=>b.score-a.score);
 
-  let html="";
-  arr.slice(0,10).forEach(d=>{
-   html+=`<li>${d.username} - ${d.score}</li>`;
-  });
-
-  leaderboard.innerHTML=html;
+  leaderboard.innerHTML=arr.slice(0,10)
+    .map(d=>`<li>${d.username} - ${d.score}</li>`).join("");
  });
 }
 loadLeaderboard();
 
-// TIMER (5 min)
-let time=300;
-
+// TIMER
+let t=300;
 setInterval(()=>{
- time--;
- let m=Math.floor(time/60);
- let s=time%60;
- timer.innerText="Refresh in "+m+":"+s;
-
- if(time<=0){
-  loadLeaderboard();
-  time=300;
- }
+ t--;
+ timer.innerText="Refresh in "+Math.floor(t/60)+":"+String(t%60).padStart(2,"0");
+ if(t<=0){loadLeaderboard();t=300;}
 },1000);
 
 </script>
-
 </body>
   </html>
