@@ -865,10 +865,7 @@ function loadGiftLog(){
       </div>`;
     }).join("");
   });
-    }
-  await update(ref(db,"payouts/"+reqId),{status:"approved"});
-  toast("Request approved ✅","ok");
-};
+    
 window.rejectRequest=async(reqId)=>{
   const snap=await get(ref(db,"payouts/"+reqId));
   if(!snap.exists())return;
