@@ -1,288 +1,305 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Intier Gaming</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Intier Gaming</title>
 
 <style>
 body {
-  margin:0;
-  font-family:Arial;
-  background:linear-gradient(135deg,#0f172a,#020617);
-  color:white;
-  text-align:center;
+  margin: 0;
+  font-family: Arial;
+  background: linear-gradient(135deg, #0f172a, #020617);
+  color: white;
+  text-align: center;
 }
-.topbar{
-  display:flex;
-  justify-content:space-between;
-  padding:10px;
+
+.header {
+  padding: 15px;
+  background: #020617;
+  font-size: 22px;
+  color: #22c55e;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
-.menu,.profileIcon{
-  font-size:22px;
-  cursor:pointer;
+
+.menu, .profileBtn {
+  font-size: 22px;
+  cursor: pointer;
 }
-.menuBox{
-  position:absolute;
-  top:50px;
-  left:10px;
-  background:#1e293b;
-  padding:10px;
-  border-radius:10px;
-  display:none;
+
+.card {
+  background: #1e293b;
+  padding: 20px;
+  border-radius: 15px;
+  margin: 20px auto;
+  max-width: 400px;
 }
-.card{
-  background:#1e293b;
-  padding:20px;
-  border-radius:15px;
-  margin:20px auto;
-  max-width:400px;
+
+button {
+  width: 80%;
+  padding: 12px;
+  margin: 8px;
+  border-radius: 12px;
+  border: none;
+  background: #22c55e;
+  color: white;
 }
-button{
-  width:80%;
-  padding:12px;
-  margin:8px;
-  border-radius:10px;
-  border:none;
-  background:#22c55e;
-  color:white;
+
+input {
+  padding: 10px;
+  width: 80%;
+  border-radius: 10px;
+  border: none;
+  margin: 10px;
 }
-input{
-  padding:10px;
-  width:80%;
-  border-radius:10px;
-  border:none;
-  margin:10px;
+
+.hidden { display: none; }
+
+.menuBox {
+  position: absolute;
+  top: 60px;
+  left: 10px;
+  background: #1e293b;
+  padding: 10px;
+  border-radius: 10px;
 }
-.hidden{display:none;}
+
+.profilePage {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #020617;
+  display: none;
+}
 </style>
 </head>
 
 <body>
 
-<!-- TOP BAR -->
-<div class="topbar">
-  <div class="menu" onclick="toggleMenu()">☰</div>
-  <div>🎮 Intier Gaming</div>
-  <div class="profileIcon" onclick="openProfile()">👤</div>
+<div class="header">
+  <span class="menu" onclick="toggleMenu()">☰</span>
+  🎮 Intier Gaming
+  <span class="profileBtn" onclick="openProfile()">👤</span>
 </div>
 
-<div class="menuBox" id="menuBox">
-  <p onclick="goHome()">🏠 Home</p>
-  <p onclick="openProfile()">👤 Profile</p>
+<div id="menuBox" class="menuBox hidden">
+  <p onclick="goHome()">Home</p>
+  <p onclick="openProfile()">Profile</p>
 </div>
 
 <!-- LOGIN -->
 <div class="card" id="login">
-<h3>Login / Signup</h3>
-<input type="email" id="email" placeholder="Email"><br>
-<input type="password" id="password" placeholder="Password"><br>
-<button onclick="signup()">Signup</button>
-<button onclick="login()">Login</button>
+  <h2>Login / Sign Up</h2>
+  <input type="email" id="email" placeholder="Email">
+  <input type="password" id="password" placeholder="Password">
+  <button onclick="signup()">Sign Up</button>
+  <button onclick="login()">Login</button>
 </div>
 
 <!-- USERNAME -->
-<div class="card hidden" id="usernameCard">
-<h3>Create Username</h3>
-<input type="text" id="username" placeholder="@username">
-<button onclick="saveUsername()">Save Username</button>
+<div class="card hidden" id="usernameBox">
+  <h2>Create Username</h2>
+  <input id="usernameInput" placeholder="@username">
+  <button onclick="saveUsername()">Save Username</button>
 </div>
 
-<!-- HOME -->
-<div class="card hidden" id="home">
-<h3 id="welcome"></h3>
-<button onclick="startQuiz()">▶ Start Quiz</button>
-</div>
-
-<!-- PROFILE -->
-<div class="card hidden" id="profile">
-<h3>👤 Profile</h3>
-<p id="pEmail"></p>
-<p id="pUsername"></p>
-<p id="pScore"></p>
-<button onclick="logout()">Logout</button>
+<!-- MAIN -->
+<div class="card hidden" id="main">
+  <h2 id="welcome"></h2>
+  <button onclick="startQuiz()">▶ Start Quiz</button>
+  <p id="timer"></p>
 </div>
 
 <!-- GAME -->
 <div class="card hidden" id="game">
-<h3 id="question"></h3>
-<div id="options"></div>
-<p id="score"></p>
+  <h3 id="question"></h3>
+  <div id="options"></div>
+  <p id="score"></p>
 </div>
 
 <!-- LEADERBOARD -->
 <div class="card">
-<h3>🏆 Global Leaderboard</h3>
-<p id="timer"></p>
-<ul id="leaderboard"></ul>
+  <h3>🏆 Leaderboard</h3>
+  <ul id="leaderboard"></ul>
+</div>
+
+<!-- PROFILE -->
+<div id="profilePage" class="profilePage">
+  <h2>Profile</h2>
+  <p id="pEmail"></p>
+  <p id="pUsername"></p>
+  <p id="pScore"></p>
+  <button onclick="logout()">Logout</button>
+  <button onclick="closeProfile()">Close</button>
 </div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-import { getDatabase, ref, set, get, onValue, update } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getDatabase, ref, set, get, update, onValue } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDgjlWP9Ovp8lI-aS5ypaLUfb1by0ttejY",
+  apiKey: "YOUR_API_KEY",
   authDomain: "intier-gaming.firebaseapp.com",
   databaseURL: "https://intier-gaming-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "intier-gaming"
+  projectId: "intier-gaming",
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-const auth = getAuth(app);
+const auth = getAuth();
 
-let user=null,points=0,current=0;
+let user = null;
+let points = 0;
+let current = 0;
 
-// MENU
-window.toggleMenu=()=>menuBox.style.display=menuBox.style.display==="block"?"none":"block";
+const questions = [
+  {q:"2+2?", options:["3","4","5"], answer:"4"},
+  {q:"Capital of India?", options:["Delhi","Mumbai"], answer:"Delhi"}
+];
 
-// UI
-function show(id){
- ["login","usernameCard","home","game","profile"].forEach(i=>{
-  document.getElementById(i).classList.add("hidden");
- });
- document.getElementById(id).classList.remove("hidden");
-}
+onAuthStateChanged(auth, async (u) => {
+  if(u){
+    user = u;
+    document.getElementById("login").classList.add("hidden");
 
-// AUTH
-onAuthStateChanged(auth,async(u)=>{
- if(u){user=u;checkUsername();}
- else show("login");
+    let snap = await get(ref(db,"users/"+user.uid));
+    let data = snap.val();
+
+    if(!data?.username){
+      document.getElementById("usernameBox").classList.remove("hidden");
+    } else {
+      startMain(data);
+    }
+  }
 });
 
-// CHECK USERNAME
-async function checkUsername(){
- const snap=await get(ref(db,"users/"+user.uid));
- if(snap.exists()){
-  welcome.innerText="Welcome "+snap.val().username;
-  show("home");
- } else show("usernameCard");
+function startMain(data){
+  document.getElementById("usernameBox").classList.add("hidden");
+  document.getElementById("main").classList.remove("hidden");
+
+  document.getElementById("welcome").innerText = "Welcome " + data.username;
+  document.getElementById("pEmail").innerText = user.email;
+  document.getElementById("pUsername").innerText = data.username;
+  document.getElementById("pScore").innerText = "Score: " + (data.score||0);
 }
 
-// AUTH
-window.signup=async()=>{
- try{
+window.signup = async ()=>{
   await createUserWithEmailAndPassword(auth,email.value,password.value);
- }catch(e){alert(e.message);}
 };
 
-window.login=async()=>{
- try{
+window.login = async ()=>{
   await signInWithEmailAndPassword(auth,email.value,password.value);
- }catch(e){alert(e.message);}
 };
 
-window.logout=()=>signOut(auth);
-
-// FIXED USERNAME FUNCTION
-window.saveUsername=async()=>{
- try{
-  let uname=username.value.trim();
-
-  if(!uname.startsWith("@")) uname="@"+uname;
+window.saveUsername = async ()=>{
+  let uname = usernameInput.value.trim();
 
   if(uname.includes(" ")) return alert("No spaces allowed");
-  if(!/^@[a-zA-Z0-9_]+$/.test(uname)) return alert("Invalid username");
+  uname = "@" + uname;
 
-  const check=await get(ref(db,"usernames/"+uname));
-  if(check.exists()) return alert("Username already taken");
+  let check = await get(ref(db,"usernames/"+uname));
+  if(check.exists()) return alert("Username taken");
 
   await set(ref(db,"users/"+user.uid),{
-    username:uname,
     email:user.email,
+    username:uname,
     score:0
   });
 
-  await set(ref(db,"usernames/"+uname),user.uid);
+  await set(ref(db,"usernames/"+uname), user.uid);
 
-  alert("Username saved ✅");
-
-  checkUsername();
-
- }catch(e){
-  console.error(e);
-  alert("Error: "+e.message);
- }
+  startMain({username:uname,score:0});
 };
 
-// PROFILE
-window.openProfile=async()=>{
- const snap=await get(ref(db,"users/"+user.uid));
- const d=snap.val();
- pEmail.innerText="Email: "+d.email;
- pUsername.innerText="Username: "+d.username;
- pScore.innerText="Points: "+d.score;
- show("profile");
-};
-
-window.goHome=()=>show("home");
-
-// GAME
-const questions=[
- {q:"2+2?",options:["3","4","5"],answer:"4"},
- {q:"Capital of India?",options:["Delhi","Mumbai"],answer:"Delhi"},
- {q:"3x3?",options:["6","9"],answer:"9"}
-];
-
-window.startQuiz=()=>{
- points=0;current=0;
- show("game");
- showQuestion();
+window.startQuiz = ()=>{
+  points = 0;
+  current = 0;
+  main.classList.add("hidden");
+  game.classList.remove("hidden");
+  showQuestion();
 };
 
 function showQuestion(){
- let q=questions[current];
- question.innerText=q.q;
- options.innerHTML=q.options.map(o=>`<button onclick="checkAnswer('${o}')">${o}</button>`).join("");
+  let q = questions[current];
+  question.innerText = q.q;
+
+  let html="";
+  q.options.forEach(o=>{
+    html += `<button onclick="answer('${o}')">${o}</button>`;
+  });
+
+  options.innerHTML = html;
 }
 
-window.checkAnswer=async(ans)=>{
- if(ans===questions[current].answer) points+=25;
- current++;
+window.answer = async(ans)=>{
+  if(ans===questions[current].answer) points+=25;
 
- if(current<questions.length) showQuestion();
- else{
-  question.innerText="🎉 Finished!";
-  options.innerHTML="";
+  current++;
 
-  const snap=await get(ref(db,"users/"+user.uid));
-  const d=snap.val();
+  if(current<questions.length){
+    showQuestion();
+  } else {
+    game.classList.add("hidden");
+    main.classList.remove("hidden");
 
-  let newScore=(d.score||0)+points;
+    let userRef = ref(db,"users/"+user.uid);
+    let snap = await get(userRef);
+    let old = snap.val().score || 0;
 
-  await update(ref(db,"users/"+user.uid),{score:newScore});
+    if(points > old){ // anti cheat
+      await update(userRef,{score:points});
 
-  await set(ref(db,"leaderScores/"+user.uid),{
-    username:d.username,
-    score:newScore
-  });
- }
+      await set(ref(db,"leaderboard/"+user.uid),{
+        username:snap.val().username,
+        score:points
+      });
+    }
 
- score.innerText="Points: "+points;
+    loadLeaderboard();
+  }
+
+  score.innerText = "Points: "+points;
 };
 
-// LEADERBOARD
 function loadLeaderboard(){
- onValue(ref(db,"leaderScores"),snap=>{
-  let arr=[];
-  snap.forEach(c=>arr.push(c.val()));
-  arr.sort((a,b)=>b.score-a.score);
-
-  leaderboard.innerHTML=arr.slice(0,10)
-    .map(d=>`<li>${d.username} - ${d.score}</li>`).join("");
- });
+  onValue(ref(db,"leaderboard"), snap=>{
+    let html="";
+    snap.forEach(child=>{
+      let d = child.val();
+      html += `<li>${d.username} - ${d.score}</li>`;
+    });
+    leaderboard.innerHTML = html;
+  });
 }
-loadLeaderboard();
 
-// TIMER
-let t=300;
+/* GLOBAL TIMER */
 setInterval(()=>{
- t--;
- timer.innerText="Refresh in "+Math.floor(t/60)+":"+String(t%60).padStart(2,"0");
- if(t<=0){loadLeaderboard();t=300;}
+  let now = Math.floor(Date.now()/1000);
+  let remaining = 300 - (now % 300);
+
+  if(remaining === 300){
+    loadLeaderboard();
+  }
+
+  let m = Math.floor(remaining/60);
+  let s = remaining%60;
+
+  timer.innerText = "Refresh in "+m+":"+String(s).padStart(2,"0");
 },1000);
 
+/* UI */
+window.toggleMenu=()=>menuBox.classList.toggle("hidden");
+window.openProfile=()=>profilePage.style.display="block";
+window.closeProfile=()=>profilePage.style.display="none";
+window.goHome=()=>profilePage.style.display="none";
+window.logout=()=>signOut(auth);
+
 </script>
+
 </body>
 </html>
