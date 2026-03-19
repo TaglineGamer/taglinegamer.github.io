@@ -167,27 +167,28 @@ function checkAnswer(ans){
 
 // Save leaderboard
 function saveScore(){
-  let leaderboard = JSON.parse(localStorage.getItem("leaderboard")) || [];
+  const scoreRef = ref(db, "leaderboard");
 
-  leaderboard.push({name: player, score: points});
-
-  leaderboard.sort((a,b)=>b.score - a.score);
-
-  leaderboard = leaderboard.slice(0,5);
-
-  localStorage.setItem("leaderboard", JSON.stringify(leaderboard));
+  push(scoreRef, {
+    name: player,
+    score: points
+  });
 }
 
 // Load leaderboard
 function loadLeaderboard(){
-  let leaderboard = JSON.parse(localStorage.getItem("leaderboard")) || [];
-  let html = "";
+  const scoreRef = ref(db, "leaderboard");
 
-  leaderboard.forEach(p=>{
-    html += `<li>${p.name} - ${p.score}</li>`;
+  onValue(scoreRef, (snapshot) => {
+    let html = "";
+
+    snapshot.forEach(child => {
+      const data = child.val();
+      html += `<li>${data.name} - ${data.score}</li>`;
+    });
+
+    document.getElementById("leaderboard").innerHTML = html;
   });
-
-  document.getElementById("leaderboard").innerHTML = html;
 }
 
 </script>
