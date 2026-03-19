@@ -117,6 +117,9 @@
 </style>
 </head>
 <body>
+
+  Part-2 ❤️
+  
   <div class="header">
   <button class="iconBtn" onclick="toggleMenu()">☰</button>
   <div class="logo">INTIER<span>.</span>GG</div>
@@ -236,7 +239,10 @@
 </div>
 
 <div id="toast"></div>
-<script type="module">
+
+PART-3 ❤️
+
+  <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, get, update, onValue, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -248,27 +254,121 @@ const firebaseConfig = {
   projectId:"intier-gaming"
 };
 const app=initializeApp(firebaseConfig), db=getDatabase(app), auth=getAuth(app);
-let user=null,userData=null,current=0,sessionPts=0,answered=false;
+let user=null, userData=null, current=0, sessionPts=0, answered=false, lbStarted=false;
 
-function show(id){["login","usernameBox","home","game"].forEach(i=>{const e=document.getElementById(i);if(e)e.classList.add("hidden");});const t=document.getElementById(id);if(t)t.classList.remove("hidden");}
+function show(id){
+  ["login","usernameBox","home","game"].forEach(i=>{
+    const e=document.getElementById(i);if(e)e.classList.add("hidden");
+  });
+  const t=document.getElementById(id);if(t)t.classList.remove("hidden");
+}
 
-onAuthStateChanged(auth,async(u)=>{if(u){user=u;const s=await get(ref(db,"users/"+u.uid));if(s.exists()){userData=s.val();enterApp();}else show("usernameBox");}else{user=null;userData=null;show("login");document.getElementById("navScore").style.display="none";}});
+onAuthStateChanged(auth,async(u)=>{
+  if(u){
+    user=u;
+    const s=await get(ref(db,"users/"+u.uid));
+    if(s.exists()){userData=s.val();enterApp();}
+    else show("usernameBox");
+  } else {
+    user=null;userData=null;show("login");
+    document.getElementById("navScore").style.display="none";
+  }
+});
 
-window.signup=async()=>{const e=document.getElementById("emailS").value.trim(),p=document.getElementById("passwordS").value,err=document.getElementById("signupErr"),ok=document.getElementById("signupOk");err.classList.remove("show");ok.classList.remove("show");if(!e||!p){showAlert(err,"Fill in all fields.");return;}try{await createUserWithEmailAndPassword(auth,e,p);showAlert(ok,"Account created! Now set your username.");}catch(ex){showAlert(err,friendlyErr(ex.code));}};
+window.signup=async()=>{
+  const e=document.getElementById("emailS").value.trim(),p=document.getElementById("passwordS").value;
+  const err=document.getElementById("signupErr"),ok=document.getElementById("signupOk");
+  err.classList.remove("show");ok.classList.remove("show");
+  if(!e||!p){showAlert(err,"Fill in all fields.");return;}
+  try{await createUserWithEmailAndPassword(auth,e,p);showAlert(ok,"Account created! Now set your username.");}
+  catch(ex){showAlert(err,friendlyErr(ex.code));}
+};
 
-window.loginUser=async()=>{const e=document.getElementById("email").value.trim(),p=document.getElementById("password").value,err=document.getElementById("loginErr");err.classList.remove("show");if(!e||!p){showAlert(err,"Fill in all fields.");return;}try{await signInWithEmailAndPassword(auth,e,p);}catch(ex){showAlert(err,friendlyErr(ex.code));}};
+window.loginUser=async()=>{
+  const e=document.getElementById("email").value.trim(),p=document.getElementById("password").value;
+  const err=document.getElementById("loginErr");
+  err.classList.remove("show");
+  if(!e||!p){showAlert(err,"Fill in all fields.");return;}
+  try{await signInWithEmailAndPassword(auth,e,p);}
+  catch(ex){showAlert(err,friendlyErr(ex.code));}
+};
 
 window.logout=()=>{signOut(auth);closeProfile();toast("Logged out 👋","ok");};
 
-window.fmtUser=(inp)=>{let v=inp.value.replace(/[^@a-zA-Z0-9_]/g,"");if(!v.startsWith("@"))v="@"+v.replace(/@/g,"");inp.value=v;};
+window.fmtUser=(inp)=>{
+  let v=inp.value.replace(/[^@a-zA-Z0-9_]/g,"");
+  if(!v.startsWith("@"))v="@"+v.replace(/@/g,"");
+  inp.value=v;
+};
 
-window.saveUsername=async()=>{const uname=document.getElementById("usernameInput").value.trim(),err=document.getElementById("unErr"),ok=document.getElementById("unOk");err.classList.remove("show");ok.classList.remove("show");if(!uname.startsWith("@")||uname.length<2){showAlert(err,"Must start with @ and have at least 1 char.");return;}if(!/^@[a-zA-Z0-9_]+$/.test(uname)){showAlert(err,"Only letters, numbers, underscores.");return;}if(uname.length>20){showAlert(err,"Max 20 characters.");return;}const taken=await get(ref(db,"usernames/"+uname));if(taken.exists()){showAlert(err,"Username taken. Try another!");return;}await set(ref(db,"users/"+user.uid),{username:uname,email:user.email,score:0});await set(ref(db,"usernames/"+uname),user.uid);await set(ref(db,"leaderboard/"+user.uid),{username:uname,score:0});userData={username:uname,email:user.email,score:0};showAlert(ok,"Welcome, "+uname+"!");setTimeout(()=>enterApp(),900);};
+window.saveUsername=async()=>{
+  const uname=document.getElementById("usernameInput").value.trim();
+  const err=document.getElementById("unErr"),ok=document.getElementById("unOk");
+  err.classList.remove("show");ok.classList.remove("show");
+  if(!uname.startsWith("@")||uname.length<2){showAlert(err,"Must start with @ and have at least 1 char.");return;}
+  if(!/^@[a-zA-Z0-9_]+$/.test(uname)){showAlert(err,"Only letters, numbers, underscores.");return;}
+  if(uname.length>20){showAlert(err,"Max 20 characters.");return;}
+  const taken=await get(ref(db,"usernames/"+uname));
+  if(taken.exists()){showAlert(err,"Username taken. Try another!");return;}
+  await set(ref(db,"users/"+user.uid),{username:uname,email:user.email,score:0});
+  await set(ref(db,"usernames/"+uname),user.uid);
+  await set(ref(db,"leaderboard/"+user.uid),{username:uname,score:0});
+  userData={username:uname,email:user.email,score:0};
+  showAlert(ok,"Welcome, "+uname+"!");
+  setTimeout(()=>enterApp(),900);
+};
 
-function enterApp(){document.getElementById("navScore").style.display="block";updateNavUI();show("home");listenScore();}
+function enterApp(){
+  document.getElementById("navScore").style.display="block";
+  updateNavUI();
+  show("home");
+  listenScore();
+  startLeaderboard();
+}
 
-function updateNavUI(){if(!userData)return;document.getElementById("navScoreVal").textContent=userData.score||0;document.getElementById("sbUsername").textContent=userData.username||"—";document.getElementById("sbEmail").textContent=userData.email||user?.email||"—";document.getElementById("welcome").textContent="WELCOME BACK, "+(userData.username||"");document.getElementById("homeScore").textContent=userData.score||0;}
+function updateNavUI(){
+  if(!userData)return;
+  document.getElementById("navScoreVal").textContent=userData.score||0;
+  document.getElementById("sbUsername").textContent=userData.username||"—";
+  document.getElementById("sbEmail").textContent=userData.email||user?.email||"—";
+  document.getElementById("welcome").textContent="WELCOME BACK, "+(userData.username||"");
+  document.getElementById("homeScore").textContent=userData.score||0;
+}
 
-function listenScore(){onValue(ref(db,"users/"+user.uid+"/score"),snap=>{if(!snap.exists())return;const s=snap.val();if(userData)userData.score=s;document.getElementById("navScoreVal").textContent=s;document.getElementById("homeScore").textContent=s;document.getElementById("pScore").textContent=s;});}
+function listenScore(){
+  onValue(ref(db,"users/"+user.uid+"/score"),snap=>{
+    if(!snap.exists())return;
+    const s=snap.val();
+    if(userData)userData.score=s;
+    document.getElementById("navScoreVal").textContent=s;
+    document.getElementById("homeScore").textContent=s;
+    document.getElementById("pScore").textContent=s;
+  });
+}
+
+// ── LEADERBOARD (only starts after login) ──
+function startLeaderboard(){
+  if(lbStarted)return;
+  lbStarted=true;
+  onValue(ref(db,"leaderboard"),snap=>{
+    const rows=[];
+    snap.forEach(c=>rows.push({uid:c.key,...c.val()}));
+    rows.sort((a,b)=>b.score-a.score);
+    if(user){
+      const idx=rows.findIndex(r=>r.uid===user.uid);
+      document.getElementById("pRank").textContent=idx>=0?"#"+(idx+1):"#—";
+    }
+    const medals=["🥇","🥈","🥉"];
+    document.getElementById("leaderboard").innerHTML=rows.length
+      ? rows.map((r,i)=>`
+          <div class="lb-row">
+            <div class="lb-rank">${i<3?medals[i]:i+1}</div>
+            <div class="lb-name" style="${user&&r.uid===user.uid?"color:var(--accent)":""}">${r.username}${user&&r.uid===user.uid?" ★":""}</div>
+            <div class="lb-score">${r.score}</div>
+          </div>`).join("")
+      : `<p style="color:var(--muted);text-align:center;padding:20px;">No scores yet. Be the first!</p>`;
+  });
+}
 
 const questions=[
   {q:"What is the capital of France?",opts:["Berlin","Madrid","Paris","Rome"],ans:"Paris"},
@@ -324,29 +424,122 @@ const questions=[
 ];
 
 let shuffled=[];
-window.startQuiz=()=>{shuffled=[...questions].sort(()=>Math.random()-0.5);current=0;sessionPts=0;answered=false;show("game");renderQ();};
 
-function renderQ(){if(current>=shuffled.length){quizDone();return;}const q=shuffled[current],L=["A","B","C","D"];answered=false;document.getElementById("qCount").textContent=`Q ${current+1} / ${shuffled.length}`;document.getElementById("qPts").textContent=`⚡ ${(userData&&userData.score)||0}`;document.getElementById("qProg").style.width=(current/shuffled.length*100)+"%";document.getElementById("question").textContent=q.q;document.getElementById("feedback").className="feedback";document.getElementById("btnNext").classList.remove("show");document.getElementById("options").innerHTML=q.opts.map((o,i)=>`<button class="opt-btn" id="opt${i}" onclick="answerQ(${i})"><div class="opt-letter">${L[i]}</div>${o}</button>`).join("");}
+// ── FIXED startQuiz: always rebuilds the game div first ──
+window.startQuiz=()=>{
+  shuffled=[...questions].sort(()=>Math.random()-0.5);
+  current=0; sessionPts=0; answered=false;
 
-window.answerQ=async(idx)=>{if(answered)return;answered=true;const q=shuffled[current],chosen=q.opts[idx],isOk=chosen===q.ans,fb=document.getElementById("feedback");q.opts.forEach((_,i)=>{const b=document.getElementById("opt"+i);if(b)b.disabled=true;});q.opts.forEach((o,i)=>{const b=document.getElementById("opt"+i);if(!b)return;if(o===q.ans)b.classList.add("correct");else if(i===idx)b.classList.add("wrong");});if(isOk){fb.textContent="✅ CORRECT! +25 POINTS";fb.className="feedback correct";sessionPts+=25;await addScore(25);}else{fb.textContent="❌ WRONG! Answer: "+q.ans;fb.className="feedback wrong";}const nb=document.getElementById("btnNext");nb.textContent=current===shuffled.length-1?"SEE RESULTS":"NEXT →";nb.classList.add("show");};
+  // Rebuild game div structure so it always works
+  document.getElementById("game").innerHTML=`
+    <div class="q-header">
+      <div class="q-count" id="qCount">Q 1 / 50</div>
+      <div class="q-pts" id="qPts">⚡ 0</div>
+    </div>
+    <div class="q-prog-wrap">
+      <div class="q-prog-fill" id="qProg" style="width:0%"></div>
+    </div>
+    <div class="q-box" id="question"></div>
+    <div id="options"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="btn btn-outline btn-next" id="btnNext" onclick="nextQ()">NEXT →</button>
+  `;
+
+  show("game");
+  renderQ();
+};
+
+function renderQ(){
+  if(current>=shuffled.length){quizDone();return;}
+  const q=shuffled[current],L=["A","B","C","D"];
+  answered=false;
+  document.getElementById("qCount").textContent=`Q ${current+1} / ${shuffled.length}`;
+  document.getElementById("qPts").textContent=`⚡ ${(userData&&userData.score)||0}`;
+  document.getElementById("qProg").style.width=(current/shuffled.length*100)+"%";
+  document.getElementById("question").textContent=q.q;
+  document.getElementById("feedback").className="feedback";
+  document.getElementById("btnNext").classList.remove("show");
+  document.getElementById("options").innerHTML=q.opts.map((o,i)=>
+    `<button class="opt-btn" id="opt${i}" onclick="answerQ(${i})">
+      <div class="opt-letter">${L[i]}</div>${o}
+    </button>`
+  ).join("");
+}
+
+window.answerQ=async(idx)=>{
+  if(answered)return;
+  answered=true;
+  const q=shuffled[current],chosen=q.opts[idx],isOk=chosen===q.ans;
+  const fb=document.getElementById("feedback");
+  q.opts.forEach((_,i)=>{const b=document.getElementById("opt"+i);if(b)b.disabled=true;});
+  q.opts.forEach((o,i)=>{
+    const b=document.getElementById("opt"+i);if(!b)return;
+    if(o===q.ans)b.classList.add("correct");
+    else if(i===idx)b.classList.add("wrong");
+  });
+  if(isOk){
+    fb.textContent="✅ CORRECT! +25 POINTS";
+    fb.className="feedback correct";
+    sessionPts+=25;
+    await addScore(25);
+  } else {
+    fb.textContent="❌ WRONG! Answer: "+q.ans;
+    fb.className="feedback wrong";
+  }
+  const nb=document.getElementById("btnNext");
+  nb.textContent=current===shuffled.length-1?"SEE RESULTS":"NEXT →";
+  nb.classList.add("show");
+};
 
 window.nextQ=()=>{current++;renderQ();};
 
-function quizDone(){document.getElementById("game").innerHTML=`<div style="text-align:center;padding:20px 0;"><div style="font-family:'Orbitron',monospace;font-size:20px;font-weight:900;color:var(--accent);margin-bottom:12px;">🎉 QUIZ COMPLETE!</div><div style="font-family:'Orbitron',monospace;font-size:48px;font-weight:900;color:var(--gold);text-shadow:0 0 28px rgba(255,214,0,0.4);margin:12px 0;">+${sessionPts}</div><p style="color:var(--muted);margin-bottom:8px;">Points earned this round</p><p style="font-family:'Orbitron',monospace;font-size:13px;color:var(--accent);margin-bottom:24px;">TOTAL: ${(userData&&userData.score)||0} PTS</p><button class="btn btn-primary" onclick="goHome()" style="max-width:280px;margin:0 auto 10px;">BACK TO HOME</button><button class="btn btn-outline" onclick="startQuiz()" style="max-width:280px;margin:0 auto;">PLAY AGAIN</button></div>`;}
+function quizDone(){
+  document.getElementById("game").innerHTML=`
+    <div style="text-align:center;padding:20px 0;">
+      <div style="font-family:'Orbitron',monospace;font-size:20px;font-weight:900;color:var(--accent);margin-bottom:12px;">🎉 QUIZ COMPLETE!</div>
+      <div style="font-family:'Orbitron',monospace;font-size:48px;font-weight:900;color:var(--gold);text-shadow:0 0 28px rgba(255,214,0,0.4);margin:12px 0;">+${sessionPts}</div>
+      <p style="color:var(--muted);margin-bottom:8px;">Points earned this round</p>
+      <p style="font-family:'Orbitron',monospace;font-size:13px;color:var(--accent);margin-bottom:24px;">TOTAL: ${(userData&&userData.score)||0} PTS</p>
+      <button class="btn btn-primary" onclick="goHome()" style="max-width:280px;margin:0 auto 10px;">BACK TO HOME</button>
+      <button class="btn btn-outline" onclick="startQuiz()" style="max-width:280px;margin:0 auto;">PLAY AGAIN</button>
+    </div>`;
+}
 
-async function addScore(pts){if(!user||pts<=0)return;await runTransaction(ref(db,"users/"+user.uid+"/score"),cur=>(cur||0)+pts);const snap=await get(ref(db,"users/"+user.uid+"/score"));if(snap.exists())await update(ref(db,"leaderboard/"+user.uid),{username:userData.username,score:snap.val()});}
+async function addScore(pts){
+  if(!user||pts<=0)return;
+  await runTransaction(ref(db,"users/"+user.uid+"/score"),cur=>(cur||0)+pts);
+  const snap=await get(ref(db,"users/"+user.uid+"/score"));
+  if(snap.exists())await update(ref(db,"leaderboard/"+user.uid),{username:userData.username,score:snap.val()});
+}
 
-onValue(ref(db,"leaderboard"),snap=>{const rows=[];snap.forEach(c=>rows.push({uid:c.key,...c.val()}));rows.sort((a,b)=>b.score-a.score);if(user){const idx=rows.findIndex(r=>r.uid===user.uid);document.getElementById("pRank").textContent=idx>=0?"#"+(idx+1):"#—";}const medals=["🥇","🥈","🥉"];document.getElementById("leaderboard").innerHTML=rows.length?rows.map((r,i)=>`<div class="lb-row"><div class="lb-rank">${i<3?medals[i]:i+1}</div><div class="lb-name" style="${user&&r.uid===user.uid?"color:var(--accent)":""}">${r.username}${user&&r.uid===user.uid?" ★":""}</div><div class="lb-score">${r.score}</div></div>`).join(""):`<p style="color:var(--muted);text-align:center;padding:20px;">No scores yet. Be the first!</p>`;});
+setInterval(()=>{
+  const now=Math.floor(Date.now()/1000),r=300-(now%300),m=Math.floor(r/60),s=r%60;
+  const el=document.getElementById("timerDisplay");if(!el)return;
+  el.textContent=`${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+  el.className=r<=30?"urgent":"";
+  const bar=document.getElementById("timerBar");if(bar)bar.style.width=(r/300*100)+"%";
+},1000);
 
-setInterval(()=>{const now=Math.floor(Date.now()/1000),r=300-(now%300),m=Math.floor(r/60),s=r%60,el=document.getElementById("timerDisplay");if(!el)return;el.textContent=`${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;el.className=r<=30?"urgent":"";const bar=document.getElementById("timerBar");if(bar)bar.style.width=(r/300*100)+"%";},1000);
-
-window.openProfile=()=>{closeSidebar();if(userData){document.getElementById("pUsername").textContent=userData.username||"—";document.getElementById("pEmail").textContent=userData.email||user?.email||"—";document.getElementById("pScore").textContent=userData.score||0;}document.getElementById("profilePage").classList.add("open");};
+window.openProfile=()=>{
+  closeSidebar();
+  if(userData){
+    document.getElementById("pUsername").textContent=userData.username||"—";
+    document.getElementById("pEmail").textContent=userData.email||user?.email||"—";
+    document.getElementById("pScore").textContent=userData.score||0;
+  }
+  document.getElementById("profilePage").classList.add("open");
+};
 window.closeProfile=()=>document.getElementById("profilePage").classList.remove("open");
 window.goHome=()=>{closeSidebar();closeProfile();show("home");};
 window.goLeaderboard=()=>{closeSidebar();show("home");setTimeout(()=>document.getElementById("lbSection").scrollIntoView({behavior:"smooth"}),120);};
 window.toggleMenu=()=>{document.getElementById("menuBox").classList.toggle("open");document.getElementById("menuOverlay").classList.toggle("open");};
 function closeSidebar(){document.getElementById("menuBox").classList.remove("open");document.getElementById("menuOverlay").classList.remove("open");}
-window.switchTab=(tab)=>{document.getElementById("loginForm").className=tab==="login"?"active":"";document.getElementById("signupForm").className=tab==="signup"?"active":"";document.getElementById("tabLogin").className="auth-tab"+(tab==="login"?" active":"");document.getElementById("tabSignup").className="auth-tab"+(tab==="signup"?" active":"");};
+window.switchTab=(tab)=>{
+  document.getElementById("loginForm").className=tab==="login"?"active":"";
+  document.getElementById("signupForm").className=tab==="signup"?"active":"";
+  document.getElementById("tabLogin").className="auth-tab"+(tab==="login"?" active":"");
+  document.getElementById("tabSignup").className="auth-tab"+(tab==="signup"?" active":"");
+};
 function showAlert(el,msg){el.textContent=msg;el.classList.add("show");}
 function toast(msg,type){const t=document.getElementById("toast");t.textContent=msg;t.className="show "+type;setTimeout(()=>t.className="",3000);}
 function friendlyErr(code){const m={"auth/user-not-found":"No account with this email.","auth/wrong-password":"Incorrect password.","auth/invalid-credential":"Invalid email or password.","auth/email-already-in-use":"Email already registered.","auth/invalid-email":"Invalid email address.","auth/weak-password":"Password must be at least 6 characters.","auth/network-request-failed":"Network error. Check your connection.","auth/too-many-requests":"Too many attempts. Try again later."};return m[code]||"Something went wrong. Please try again.";}
