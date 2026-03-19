@@ -26,14 +26,6 @@
       max-width: 400px;
     }
 
-    input {
-      padding: 10px;
-      width: 80%;
-      border-radius: 10px;
-      border: none;
-      margin: 10px;
-    }
-
     button {
       width: 80%;
       padding: 12px;
@@ -43,6 +35,14 @@
       background: #22c55e;
       color: white;
       font-size: 16px;
+    }
+
+    input {
+      padding: 10px;
+      width: 80%;
+      border-radius: 10px;
+      border: none;
+      margin: 10px;
     }
 
     .hidden {
@@ -62,7 +62,7 @@
   <button onclick="saveName()">Continue</button>
 </div>
 
-<!-- START SCREEN -->
+<!-- START -->
 <div class="card hidden" id="startScreen">
   <h2 id="welcome"></h2>
   <button onclick="startQuiz()">▶ Start Quiz</button>
@@ -73,6 +73,12 @@
   <h3 id="question"></h3>
   <div id="options"></div>
   <p id="score">Points: 0</p>
+</div>
+
+<!-- LEADERBOARD -->
+<div class="card">
+  <h3>🏆 Leaderboard (Your Device)</h3>
+  <ul id="leaderboard"></ul>
 </div>
 
 <script>
@@ -87,18 +93,16 @@ let questions = [
   {q:"3x3?", options:["6","9","12"], answer:"9"}
 ];
 
-// Load saved data
+// Load saved user
 window.onload = function(){
+  loadLeaderboard();
+
   let savedName = localStorage.getItem("player");
-  let savedPoints = localStorage.getItem("points");
 
   if(savedName){
     player = savedName;
-    points = savedPoints ? parseInt(savedPoints) : 0;
-
     document.getElementById("login").classList.add("hidden");
     document.getElementById("startScreen").classList.remove("hidden");
-
     document.getElementById("welcome").innerText = "Welcome back " + player;
   }
 };
@@ -120,12 +124,13 @@ function saveName(){
 }
 
 function startQuiz(){
+  points = 0;
+  current = 0;
+
   document.getElementById("startScreen").classList.add("hidden");
   document.getElementById("game").classList.remove("hidden");
 
-  current = 0;
   showQuestion();
-  updateScore();
 }
 
 function showQuestion(){
@@ -145,8 +150,6 @@ function checkAnswer(ans){
     points += 25;
   }
 
-  localStorage.setItem("points", points);
-
   current++;
 
   if(current < questions.length){
@@ -154,13 +157,37 @@ function checkAnswer(ans){
   } else {
     document.getElementById("question").innerText = "🎉 Finished!";
     document.getElementById("options").innerHTML = "";
+
+    saveScore();
+    loadLeaderboard();
   }
 
-  updateScore();
+  document.getElementById("score").innerText = "Points: " + points;
 }
 
-function updateScore(){
-  document.getElementById("score").innerText = "Points: " + points;
+// Save leaderboard
+function saveScore(){
+  let leaderboard = JSON.parse(localStorage.getItem("leaderboard")) || [];
+
+  leaderboard.push({name: player, score: points});
+
+  leaderboard.sort((a,b)=>b.score - a.score);
+
+  leaderboard = leaderboard.slice(0,5);
+
+  localStorage.setItem("leaderboard", JSON.stringify(leaderboard));
+}
+
+// Load leaderboard
+function loadLeaderboard(){
+  let leaderboard = JSON.parse(localStorage.getItem("leaderboard")) || [];
+  let html = "";
+
+  leaderboard.forEach(p=>{
+    html += `<li>${p.name} - ${p.score}</li>`;
+  });
+
+  document.getElementById("leaderboard").innerHTML = html;
 }
 
 </script>
