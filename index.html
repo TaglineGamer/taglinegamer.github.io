@@ -4,73 +4,123 @@
   <title>Intier Gaming</title>
   <style>
     body {
+      margin: 0;
       font-family: Arial;
-      text-align: center;
-      background: #0f172a;
+      background: linear-gradient(135deg, #0f172a, #020617);
       color: white;
+      text-align: center;
     }
+
+    .header {
+      padding: 15px;
+      background: #020617;
+      font-size: 22px;
+      color: #22c55e;
+      font-weight: bold;
+    }
+
+    .container {
+      padding: 20px;
+    }
+
+    .card {
+      background: #1e293b;
+      padding: 20px;
+      border-radius: 15px;
+      margin: 20px auto;
+      max-width: 400px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.6);
+    }
+
     button {
-      padding: 10px 20px;
-      margin-top: 15px;
-      border-radius: 10px;
+      width: 80%;
+      padding: 12px;
+      margin: 8px;
+      border-radius: 12px;
       border: none;
       background: #22c55e;
       color: white;
       font-size: 16px;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background: #16a34a;
+    }
+
+    .score {
+      font-size: 20px;
+      margin-top: 10px;
+    }
+
+    .redeem {
+      background: #334155;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 15px;
+    }
+
+    .restart {
+      background: #f59e0b;
     }
   </style>
 </head>
 
 <body>
 
-  <h1>🎮 Intier Gaming</h1>
-  <p>Play quizzes and earn points!</p>
+<div class="header">🎮 Intier Gaming</div>
 
-  <h2 id="question">Click Start</h2>
+<div class="container">
 
-  <div id="options"></div>
+  <div class="card">
+    <h2 id="question">Click Start to Play</h2>
+    <div id="options"></div>
+    <button onclick="startQuiz()">▶ Start Quiz</button>
+    <button class="restart" onclick="startQuiz()">🔄 Restart</button>
+    <div class="score" id="score">Points: 0</div>
+  </div>
 
-  <button onclick="startQuiz()">Start Quiz</button>
+  <div class="card redeem">
+    <h3>💰 Redeem Rewards</h3>
+    <p>1000 Points = ₹10</p>
+    <p>3000 Points = ₹30</p>
+    <p>10000 Points = ₹100</p>
+    <p>🚧 Coming Soon</p>
+  </div>
 
-  <h3 id="score">Points: 0</h3>
+</div>
 
 <script>
 
 let questions = [
-  {
-    q: "What is 2 + 2?",
-    options: ["3", "4", "5"],
-    answer: "4"
-  },
-  {
-    q: "Capital of India?",
-    options: ["Delhi", "Mumbai", "Kolkata"],
-    answer: "Delhi"
-  }
+  {q:"What is 2+2?", options:["3","4","5"], answer:"4"},
+  {q:"Capital of India?", options:["Delhi","Mumbai","Kolkata"], answer:"Delhi"},
+  {q:"5 x 3 = ?", options:["15","10","20"], answer:"15"},
+  {q:"Sun rises from?", options:["East","West","North"], answer:"East"}
 ];
 
 let current = 0;
 let points = 0;
 
-function startQuiz() {
+function startQuiz(){
   current = 0;
   points = 0;
   showQuestion();
 }
 
-function showQuestion() {
+function showQuestion(){
   let q = questions[current];
   document.getElementById("question").innerText = q.q;
 
   let html = "";
-  q.options.forEach(opt => {
+  q.options.forEach(opt=>{
     html += `<button onclick="checkAnswer('${opt}')">${opt}</button><br>`;
   });
 
   document.getElementById("options").innerHTML = html;
 }
 
-function checkAnswer(ans) {
+function checkAnswer(ans){
   if(ans === questions[current].answer){
     points += 25;
   }
@@ -80,7 +130,7 @@ function checkAnswer(ans) {
   if(current < questions.length){
     showQuestion();
   } else {
-    document.getElementById("question").innerText = "Quiz Finished!";
+    document.getElementById("question").innerText = "🎉 Quiz Finished!";
     document.getElementById("options").innerHTML = "";
   }
 
