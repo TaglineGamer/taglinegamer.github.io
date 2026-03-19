@@ -6,11 +6,11 @@
 
 <style>
 body {
-  margin: 0;
-  font-family: Arial;
-  background: linear-gradient(135deg,#0f172a,#020617);
-  color: white;
-  text-align: center;
+  margin:0;
+  font-family:Arial;
+  background:linear-gradient(135deg,#0f172a,#020617);
+  color:white;
+  text-align:center;
 }
 .card {
   background:#1e293b;
@@ -50,7 +50,6 @@ input {
 <input type="password" id="password" placeholder="Password"><br>
 <button onclick="signup()">Signup</button>
 <button onclick="login()">Login</button>
-<button onclick="googleLogin()">Login with Google</button>
 </div>
 
 <!-- USERNAME -->
@@ -83,7 +82,7 @@ input {
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
 import { getDatabase, ref, push, onValue, set, get } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, onAuthStateChanged, signOut, signInWithRedirect, getRedirectResult } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDgjlWP9Ovp8lI-aS5ypaLUfb1by0ttejY",
@@ -100,15 +99,21 @@ let user = null;
 let points = 0;
 let current = 0;
 
-// ✅ FIX GOOGLE REDIRECT RESULT
-getRedirectResult(auth).catch(()=>{});
-
 const questions = [
  {q:"2+2?", options:["3","4","5"], answer:"4"},
  {q:"Capital of India?", options:["Delhi","Mumbai"], answer:"Delhi"},
  {q:"3x3?", options:["6","9"], answer:"9"}
 ];
 
+// UI SWITCH
+function show(id){
+ ["login","usernameCard","home","game"].forEach(i=>{
+  document.getElementById(i).classList.add("hidden");
+ });
+ document.getElementById(id).classList.remove("hidden");
+}
+
+// AUTH STATE
 onAuthStateChanged(auth, async(u)=>{
  if(u){
   user = u;
@@ -118,13 +123,7 @@ onAuthStateChanged(auth, async(u)=>{
  }
 });
 
-function show(id){
- ["login","usernameCard","home","game"].forEach(i=>{
-  document.getElementById(i).classList.add("hidden");
- });
- document.getElementById(id).classList.remove("hidden");
-}
-
+// CHECK USERNAME
 async function checkUsername(){
  const snap = await get(ref(db,"users/"+user.uid));
  if(snap.exists()){
@@ -147,16 +146,6 @@ window.signup = async ()=>{
 window.login = async ()=>{
  try{
   await signInWithEmailAndPassword(auth,email.value,password.value);
- }catch(e){
-  alert(e.message);
- }
-}
-
-// ✅ GOOGLE LOGIN (FIXED)
-window.googleLogin = async ()=>{
- try{
-  const provider = new GoogleAuthProvider();
-  await signInWithRedirect(auth, provider);
  }catch(e){
   alert(e.message);
  }
@@ -226,21 +215,37 @@ window.checkAnswer = async(ans)=>{
  } else {
   question.innerText="🎉 Finished!";
   options.innerHTML="";
+
+  // GET USERNAME
+  const snap = await get(ref(db,"users/"+user.uid));
+  const uname = snap.val().username;
+
+  // SAVE SCORE WITH NAME
   await push(ref(db,"leaderboard"),{
-    uid:user.uid,
-    score:points
+    username: uname,
+    score: points
   });
  }
 
  score.innerText="Points: "+points;
 }
 
-// LEADERBOARD
+// LEADERBOARD (SORTED + NAME)
 onValue(ref(db,"leaderboard"),snap=>{
- let html="";
+ let arr=[];
+
  snap.forEach(child=>{
-  html+=`<li>${child.val().score}</li>`;
+  arr.push(child.val());
  });
+
+ // SORT HIGH TO LOW
+ arr.sort((a,b)=>b.score-a.score);
+
+ let html="";
+ arr.forEach(data=>{
+  html+=`<li>${data.username} - ${data.score}</li>`;
+ });
+
  leaderboard.innerHTML=html;
 });
 
