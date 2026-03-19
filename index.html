@@ -82,6 +82,25 @@ let questions = [
   {q:"3x3?", options:["6","9","12"], answer:"9"}
 ];
 
+// 🔥 Load saved data
+window.onload = function(){
+  let savedName = localStorage.getItem("player");
+  let savedPoints = localStorage.getItem("points");
+
+  if(savedName){
+    player = savedName;
+    points = savedPoints ? parseInt(savedPoints) : 0;
+
+    document.getElementById("login").classList.add("hidden");
+    document.getElementById("game").classList.remove("hidden");
+
+    document.getElementById("welcome").innerText = "Welcome back " + player;
+    document.getElementById("score").innerText = "Points: " + points;
+
+    showQuestion();
+  }
+};
+
 function startGame(){
   player = document.getElementById("playerName").value;
 
@@ -89,6 +108,8 @@ function startGame(){
     alert("Enter your name!");
     return;
   }
+
+  localStorage.setItem("player", player);
 
   document.getElementById("login").classList.add("hidden");
   document.getElementById("game").classList.remove("hidden");
@@ -117,6 +138,9 @@ function checkAnswer(ans){
   if(ans === questions[current].answer){
     points += 25;
   }
+
+  // 🔥 Save points
+  localStorage.setItem("points", points);
 
   current++;
 
