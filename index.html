@@ -1,212 +1,258 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Intier Gaming</title>
+<title>Intier Gaming</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial;
-      background: linear-gradient(135deg, #0f172a, #020617);
-      color: white;
-      text-align: center;
-    }
-
-    .header {
-      padding: 15px;
-      background: #020617;
-      font-size: 22px;
-      color: #22c55e;
-    }
-
-    .card {
-      background: #1e293b;
-      padding: 20px;
-      border-radius: 15px;
-      margin: 20px auto;
-      max-width: 400px;
-    }
-
-    button {
-      width: 80%;
-      padding: 12px;
-      margin: 8px;
-      border-radius: 12px;
-      border: none;
-      background: #22c55e;
-      color: white;
-      font-size: 16px;
-    }
-
-    input {
-      padding: 10px;
-      width: 80%;
-      border-radius: 10px;
-      border: none;
-      margin: 10px;
-    }
-
-    .hidden {
-      display: none;
-    }
-  </style>
+<style>
+body {
+  margin: 0;
+  font-family: Arial;
+  background: linear-gradient(135deg,#0f172a,#020617);
+  color: white;
+  text-align: center;
+}
+.card {
+  background:#1e293b;
+  padding:20px;
+  border-radius:15px;
+  margin:20px auto;
+  max-width:400px;
+}
+button {
+  width:80%;
+  padding:12px;
+  margin:8px;
+  border-radius:10px;
+  border:none;
+  background:#22c55e;
+  color:white;
+  font-size:16px;
+}
+input {
+  padding:10px;
+  width:80%;
+  border-radius:10px;
+  border:none;
+  margin:10px;
+}
+.hidden {display:none;}
+</style>
 </head>
 
 <body>
 
-<div class="header">🎮 Intier Gaming</div>
+<h2>🎮 Intier Gaming</h2>
 
 <!-- LOGIN -->
 <div class="card" id="login">
-  <h2>Enter Your Name</h2>
-  <input type="text" id="playerName" placeholder="Your name">
-  <button onclick="saveName()">Continue</button>
+<h3>Login / Signup</h3>
+<input type="email" id="email" placeholder="Email"><br>
+<input type="password" id="password" placeholder="Password"><br>
+<button onclick="signup()">Signup</button>
+<button onclick="login()">Login</button>
+<button onclick="googleLogin()">Login with Google</button>
 </div>
 
-<!-- START -->
-<div class="card hidden" id="startScreen">
-  <h2 id="welcome"></h2>
-  <button onclick="startQuiz()">▶ Start Quiz</button>
+<!-- USERNAME -->
+<div class="card hidden" id="usernameCard">
+<h3>Create Username</h3>
+<input type="text" id="username" placeholder="@username">
+<button onclick="saveUsername()">Save Username</button>
+</div>
+
+<!-- HOME -->
+<div class="card hidden" id="home">
+<h3 id="welcome"></h3>
+<button onclick="startQuiz()">▶ Start Quiz</button>
+<button onclick="logout()">Logout</button>
 </div>
 
 <!-- GAME -->
 <div class="card hidden" id="game">
-  <h3 id="question"></h3>
-  <div id="options"></div>
-  <p id="score">Points: 0</p>
+<h3 id="question"></h3>
+<div id="options"></div>
+<p id="score"></p>
 </div>
 
 <!-- LEADERBOARD -->
 <div class="card">
-  <h3>🏆 Global Leaderboard</h3>
-  <ul id="leaderboard"></ul>
+<h3>🏆 Global Leaderboard</h3>
+<ul id="leaderboard"></ul>
 </div>
 
-<!-- Firebase v8 (simple + stable) -->
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+import { getDatabase, ref, push, onValue, set, get } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
 
-<script>
 const firebaseConfig = {
   apiKey: "AIzaSyDgjlWP9Ovp8lI-aS5ypaLUfb1by0ttejY",
   authDomain: "intier-gaming.firebaseapp.com",
   databaseURL: "https://intier-gaming-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "intier-gaming",
-  storageBucket: "intier-gaming.firebasestorage.app",
+  storageBucket: "intier-gaming.appspot.com",
   messagingSenderId: "90246031418",
-  appId: "1:90246031418:web:72ca63ea6b6c8f0bf46d03"
+  appId: "1:90246031418:web:72ca63ea6b6c8f0b46d03"
 };
 
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const auth = getAuth(app);
 
-// VARIABLES
-let player = "";
+let user = null;
 let points = 0;
 let current = 0;
 
-let questions = [
-  {q:"2+2?", options:["3","4","5"], answer:"4"},
-  {q:"Capital of India?", options:["Delhi","Mumbai","Goa"], answer:"Delhi"},
-  {q:"3x3?", options:["6","9","12"], answer:"9"}
+const questions = [
+ {q:"2+2?", options:["3","4","5"], answer:"4"},
+ {q:"Capital of India?", options:["Delhi","Mumbai"], answer:"Delhi"},
+ {q:"3x3?", options:["6","9"], answer:"9"}
 ];
 
-// LOAD
-window.onload = function(){
-  loadLeaderboard();
+onAuthStateChanged(auth, async(u)=>{
+ if(u){
+  user = u;
+  await checkUsername();
+ } else {
+  show("login");
+ }
+});
 
-  let savedName = localStorage.getItem("player");
-
-  if(savedName){
-    player = savedName;
-    document.getElementById("login").classList.add("hidden");
-    document.getElementById("startScreen").classList.remove("hidden");
-    document.getElementById("welcome").innerText = "Welcome " + player;
-  }
-};
-
-// SAVE NAME
-function saveName(){
-  player = document.getElementById("playerName").value;
-
-  if(player === ""){
-    alert("Enter your name!");
-    return;
-  }
-
-  localStorage.setItem("player", player);
-
-  document.getElementById("login").classList.add("hidden");
-  document.getElementById("startScreen").classList.remove("hidden");
-  document.getElementById("welcome").innerText = "Welcome " + player;
+function show(id){
+ ["login","usernameCard","home","game"].forEach(i=>{
+  document.getElementById(i).classList.add("hidden");
+ });
+ document.getElementById(id).classList.remove("hidden");
 }
 
-// START QUIZ
-function startQuiz(){
-  points = 0;
-  current = 0;
-
-  document.getElementById("startScreen").classList.add("hidden");
-  document.getElementById("game").classList.remove("hidden");
-
-  showQuestion();
+async function checkUsername(){
+ const snap = await get(ref(db,"users/"+user.uid));
+ if(snap.exists()){
+  document.getElementById("welcome").innerText="Welcome "+snap.val().username;
+  show("home");
+ } else {
+  show("usernameCard");
+ }
 }
 
-// SHOW QUESTION
+window.signup = async ()=>{
+ try{
+  await createUserWithEmailAndPassword(auth,email.value,password.value);
+ }catch(e){
+  alert(e.message);
+ }
+}
+
+window.login = async ()=>{
+ try{
+  await signInWithEmailAndPassword(auth,email.value,password.value);
+ }catch(e){
+  alert(e.message);
+ }
+}
+
+window.googleLogin = async ()=>{
+ try{
+  const provider=new GoogleAuthProvider();
+  await signInWithPopup(auth,provider);
+ }catch(e){
+  alert(e.message);
+ }
+}
+
+window.logout = ()=>{
+ signOut(auth);
+}
+
+window.saveUsername = async ()=>{
+ let uname = document.getElementById("username").value.trim();
+
+ if(uname.length < 3){
+  alert("Username too short");
+  return;
+ }
+
+ if(!uname.startsWith("@")){
+  alert("Username must start with @");
+  return;
+ }
+
+ const check = await get(ref(db,"usernames/"+uname));
+ if(check.exists()){
+  alert("Username already taken!");
+  return;
+ }
+
+ await set(ref(db,"users/"+user.uid),{
+  username: uname,
+  score:0
+ });
+
+ await set(ref(db,"usernames/"+uname),user.uid);
+
+ await checkUsername();
+}
+
+window.startQuiz = ()=>{
+ points=0;
+ current=0;
+ show("game");
+ showQuestion();
+}
+
 function showQuestion(){
-  let q = questions[current];
-  document.getElementById("question").innerText = q.q;
-
-  let html = "";
-  q.options.forEach(opt=>{
-    html += `<button onclick="checkAnswer('${opt}')">${opt}</button>`;
-  });
-
-  document.getElementById("options").innerHTML = html;
+ let q=questions[current];
+ document.getElementById("question").innerText=q.q;
+ let html="";
+ q.options.forEach(opt=>{
+  html+=`<button onclick="checkAnswer('${opt}')">${opt}</button>`;
+ });
+ document.getElementById("options").innerHTML=html;
 }
 
-// CHECK ANSWER
-function checkAnswer(ans){
-  if(ans === questions[current].answer){
-    points += 25;
-  }
+window.checkAnswer = async(ans)=>{
+ if(ans===questions[current].answer){
+  points+=25;
+ }
 
-  current++;
+ current++;
 
-  if(current < questions.length){
-    showQuestion();
-  } else {
-    document.getElementById("question").innerText = "🎉 Finished!";
-    document.getElementById("options").innerHTML = "";
+ if(current<questions.length){
+  showQuestion();
+ } else {
+  document.getElementById("question").innerText="🎉 Finished!";
+  document.getElementById("options").innerHTML="";
+  
+  await saveScore();
+ }
 
-    saveScore();
-  }
-
-  document.getElementById("score").innerText = "Points: " + points;
+ document.getElementById("score").innerText="Points: "+points;
 }
 
-// SAVE SCORE (FIREBASE)
-function saveScore(){
-  db.ref("leaderboard").push({
-    name: player,
-    score: points
-  });
+async function saveScore(){
+ await push(ref(db,"leaderboard"),{
+  uid:user.uid,
+  score:points
+ });
+
+ await set(ref(db,"users/"+user.uid+"/score"),points);
 }
 
-// LOAD LEADERBOARD
 function loadLeaderboard(){
-  db.ref("leaderboard").on("value", snapshot => {
-    let html = "";
-
-    snapshot.forEach(child => {
-      let data = child.val();
-      html += `<li>${data.name} - ${data.score}</li>`;
-    });
-
-    document.getElementById("leaderboard").innerHTML = html;
+ onValue(ref(db,"leaderboard"),snap=>{
+  let html="";
+  snap.forEach(child=>{
+   let d=child.val();
+   html+=`<li>${d.score}</li>`;
   });
+  document.getElementById("leaderboard").innerHTML=html;
+ });
 }
+
+loadLeaderboard();
+
 </script>
 
 </body>
-</html>
+  </html>
