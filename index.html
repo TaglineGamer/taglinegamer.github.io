@@ -123,8 +123,6 @@
   .payout-score-box { background:var(--card); border:1px solid rgba(0,229,255,0.25); border-radius:14px; padding:16px; text-align:center; margin-bottom:20px; }
   .payout-score-box span { font-family:'Orbitron',monospace; font-size:28px; font-weight:900; color:var(--gold); }
   .payout-score-box p { font-size:12px; color:var(--muted); letter-spacing:2px; margin-top:4px; }
-  .payout-section-title { font-family:'Orbitron',monospace; font-size:12px; font-weight:700; color:var(--muted); letter-spacing:2px; text-transform:uppercase; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
-  .payout-section-title::after { content:''; flex:1; height:1px; background:var(--border); }
   .payout-card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px; margin-bottom:10px; display:flex; align-items:center; justify-content:space-between; position:relative; overflow:hidden; transition:all 0.2s; }
   .payout-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,var(--accent),var(--accent2)); opacity:0; transition:opacity 0.2s; }
   .payout-card.unlocked { border-color:rgba(0,229,255,0.25); }
@@ -168,25 +166,12 @@
   .status-approved { background:rgba(0,230,118,0.12); border:1px solid rgba(0,230,118,0.3); color:var(--green); }
   .status-rejected { background:rgba(255,61,113,0.1); border:1px solid rgba(255,61,113,0.3); color:var(--accent2); }
   .gift-section { background:var(--bg3); border:1px solid var(--border); border-radius:14px; padding:18px; margin-bottom:20px; }
-.gift-section h3 { font-family:'Orbitron',monospace; font-size:14px; font-weight:700; color:var(--gold); margin-bottom:14px; letter-spacing:1px; }
-.gift-row { display:flex; gap:10px; align-items:flex-end; }
-.gift-inp-wrap { flex:1; }
-.gift-inp-wrap label { font-size:11px; font-weight:700; letter-spacing:1.5px; color:var(--muted); display:block; margin-bottom:6px; text-transform:uppercase; }
-.gift-inp { width:100%; background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:11px 12px; color:var(--text); font-family:'Rajdhani',sans-serif; font-size:15px; outline:none; transition:border-color 0.2s; }
-.gift-inp:focus { border-color:var(--gold); }
-.gift-inp::placeholder { color:var(--muted); }
-.btn-gift { padding:11px 16px; border-radius:10px; border:none; background:linear-gradient(135deg,var(--gold),#f57f17); color:#080c14; font-family:'Rajdhani',sans-serif; font-size:14px; font-weight:800; letter-spacing:1px; cursor:pointer; white-space:nowrap; transition:all 0.2s; }
-.btn-gift:hover { opacity:0.88; }
-.gift-result { margin-top:10px; font-size:13px; font-weight:600; padding:9px 12px; border-radius:8px; display:none; }
-.gift-result.ok  { display:block; background:rgba(0,230,118,0.1); border:1px solid rgba(0,230,118,0.3); color:var(--green); }
-.gift-result.bad { display:block; background:rgba(255,61,113,0.1); border:1px solid rgba(255,61,113,0.3); color:var(--accent2); }
-.gift-log-item { background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:12px; margin-bottom:8px; }
-.gift-log-item h5 { font-family:'Orbitron',monospace; font-size:12px; color:var(--gold); margin-bottom:4px; }
-.gift-log-item p { font-size:12px; color:var(--muted); }
-</style>
-</head>
-<body>
-
+  .gift-section h3 { font-family:'Orbitron',monospace; font-size:14px; font-weight:700; color:var(--gold); margin-bottom:14px; letter-spacing:1px; }
+  .gift-row { display:flex; gap:10px; align-items:flex-end; }
+  .gift-inp-wrap { flex:1; }
+  .gift-inp-wrap label { font-size:11px; font-weight:700; letter-spacing:1.5px; color:var(--muted); display:block; margin-bottom:6px; text-transform:uppercase; }
+  .gift-inp { width:100%; background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:11px 12px; color:var(--text); font-family:'Rajdhani',sans-serif; font-size:15px; outline:none; transition:border-color 0.2s; }
+  .gift-inp:focus { border-color:var(--gold); }
 
 
 
@@ -195,9 +180,8 @@
 
 
   
-  
-  
-  <div class="header">
+
+<div class="header">
   <button class="iconBtn" onclick="toggleMenu()">☰</button>
   <div class="logo">INTIER<span>.</span>GG</div>
   <div class="nav-right">
@@ -205,7 +189,6 @@
     <button class="iconBtn" onclick="openProfile()">👤</button>
   </div>
 </div>
-
 <div id="menuOverlay" onclick="toggleMenu()"></div>
 <div id="menuBox">
   <div class="menu-header">
@@ -218,7 +201,6 @@
   <div class="menu-item" onclick="openPayout()"><span>🎁</span> PAYOUT</div>
   <div class="menu-footer"><button onclick="logout()">LOGOUT</button></div>
 </div>
-
 <div class="main">
   <div class="card" id="login">
     <div class="auth-hero">
@@ -243,7 +225,6 @@
       <div class="alert alert-success" id="signupOk"></div>
     </div>
   </div>
-
   <div class="card hidden" id="usernameBox">
     <div class="card-title">🎮 CHOOSE YOUR TAG</div>
     <p style="font-size:13px;color:var(--muted);margin-bottom:16px;">Letters, numbers and underscores only. Cannot be changed later.</p>
@@ -252,7 +233,6 @@
     <div class="alert alert-error" id="unErr"></div>
     <div class="alert alert-success" id="unOk"></div>
   </div>
-
   <div class="hidden" id="home">
     <div class="timer-bar">
       <div>
@@ -273,7 +253,6 @@
       <button class="btn btn-primary" onclick="startQuiz()">▶ START QUIZ</button>
     </div>
   </div>
-
   <div class="hidden" id="game">
     <div class="q-header">
       <div class="q-count" id="qCount">Q 1 / 50</div>
@@ -287,13 +266,11 @@
     <div class="feedback" id="feedback"></div>
     <button class="btn btn-outline btn-next" id="btnNext" onclick="nextQ()">NEXT →</button>
   </div>
-
   <div class="card" id="lbSection">
     <div class="lb-head">🏆 LEADERBOARD</div>
     <div id="leaderboard"></div>
   </div>
 </div>
-
 <div class="profilePage" id="profilePage">
   <div class="profile-inner">
     <div class="profile-hero">
@@ -315,8 +292,7 @@
     <button class="btn btn-outline" onclick="closeProfile()">CLOSE</button>
   </div>
 </div>
-
-  <div class="payout-page" id="payoutPage">
+<div class="payout-page" id="payoutPage">
   <div class="payout-inner">
     <div class="payout-hero">
       <h2>🎁 PAYOUT</h2>
@@ -333,12 +309,11 @@
     <div id="payoutCards"></div>
     <div style="background:rgba(255,214,0,0.06);border:1px solid rgba(255,214,0,0.2);border-radius:12px;padding:14px;margin-top:4px;">
       <p style="font-size:12px;color:var(--gold);font-weight:700;letter-spacing:1px;margin-bottom:4px;">⚠️ IMPORTANT</p>
-      <p style="font-size:12px;color:var(--muted);line-height:1.6;">Payouts are processed manually within 24–48 hours. Points will be deducted immediately when you submit a request.</p>
+      <p style="font-size:12px;color:var(--muted);line-height:1.6;">Payouts are processed manually within 24-48 hours. Points will be deducted immediately when you submit a request.</p>
     </div>
     <button class="btn btn-outline" onclick="closePayout()" style="margin-top:16px;">CLOSE</button>
   </div>
 </div>
-
 <div class="confirm-overlay" id="confirmOverlay">
   <div class="confirm-box">
     <h3>⚡ CONFIRM REDEMPTION</h3>
@@ -350,7 +325,6 @@
     </div>
   </div>
 </div>
-
 <div class="admin-page" id="adminPage">
   <div class="admin-inner">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
@@ -390,493 +364,87 @@
 
 
 
-
-
-
-
-
-
-  
-
-  <script type="module">
+<script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, get, update, onValue, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-const firebaseConfig = {
-  apiKey:"AIzaSyDgjlWP9Ovp8lI-aS5ypaLUfb1by0ttejY",
-  authDomain:"intier-gaming.firebaseapp.com",
-  databaseURL:"https://intier-gaming-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId:"intier-gaming"
-};
-const app=initializeApp(firebaseConfig), db=getDatabase(app), auth=getAuth(app);
-let user=null, userData=null, current=0, sessionPts=0, answered=false, lbStarted=false;
+const firebaseConfig={apiKey:"AIzaSyDgjlWP9Ovp8lI-aS5ypaLUfb1by0ttejY",authDomain:"intier-gaming.firebaseapp.com",databaseURL:"https://intier-gaming-default-rtdb.asia-southeast1.firebasedatabase.app",projectId:"intier-gaming"};
+const app=initializeApp(firebaseConfig),db=getDatabase(app),auth=getAuth(app);
+let user=null,userData=null,current=0,sessionPts=0,answered=false;
+const ADMIN_UID="k5Ott7K9tUU2dkFbwMu9DAeBdJ72";
 
-function show(id){
-  ["login","usernameBox","home","game"].forEach(i=>{
-    const e=document.getElementById(i);if(e)e.classList.add("hidden");
-  });
-  const t=document.getElementById(id);if(t)t.classList.remove("hidden");
-}
+function show(id){["login","usernameBox","home","game"].forEach(i=>{const e=document.getElementById(i);if(e)e.classList.add("hidden");});const t=document.getElementById(id);if(t)t.classList.remove("hidden");}
 
-onAuthStateChanged(auth,async(u)=>{
-  if(u){
-    user=u;
-    const s=await get(ref(db,"users/"+u.uid));
-    if(s.exists()){userData=s.val();enterApp();}
-    else show("usernameBox");
-  } else {
-    user=null;userData=null;show("login");
-    document.getElementById("navScore").style.display="none";
-  }
-});
+onAuthStateChanged(auth,async(u)=>{if(u){user=u;const s=await get(ref(db,"users/"+u.uid));if(s.exists()){userData=s.val();enterApp();}else show("usernameBox");}else{user=null;userData=null;show("login");document.getElementById("navScore").style.display="none";}});
 
-window.signup=async()=>{
-  const e=document.getElementById("emailS").value.trim(),p=document.getElementById("passwordS").value;
-  const err=document.getElementById("signupErr"),ok=document.getElementById("signupOk");
-  err.classList.remove("show");ok.classList.remove("show");
-  if(!e||!p){showAlert(err,"Fill in all fields.");return;}
-  try{await createUserWithEmailAndPassword(auth,e,p);showAlert(ok,"Account created! Now set your username.");}
-  catch(ex){showAlert(err,friendlyErr(ex.code));}
-};
+window.signup=async()=>{const e=document.getElementById("emailS").value.trim(),p=document.getElementById("passwordS").value,err=document.getElementById("signupErr"),ok=document.getElementById("signupOk");err.classList.remove("show");ok.classList.remove("show");if(!e||!p){showAlert(err,"Fill in all fields.");return;}try{await createUserWithEmailAndPassword(auth,e,p);showAlert(ok,"Account created! Now set your username.");}catch(ex){showAlert(err,friendlyErr(ex.code));}};
 
-window.loginUser=async()=>{
-  const e=document.getElementById("email").value.trim(),p=document.getElementById("password").value;
-  const err=document.getElementById("loginErr");
-  err.classList.remove("show");
-  if(!e||!p){showAlert(err,"Fill in all fields.");return;}
-  try{await signInWithEmailAndPassword(auth,e,p);}
-  catch(ex){showAlert(err,friendlyErr(ex.code));}
-};
+window.loginUser=async()=>{const e=document.getElementById("email").value.trim(),p=document.getElementById("password").value,err=document.getElementById("loginErr");err.classList.remove("show");if(!e||!p){showAlert(err,"Fill in all fields.");return;}try{await signInWithEmailAndPassword(auth,e,p);}catch(ex){showAlert(err,friendlyErr(ex.code));}};
 
 window.logout=()=>{signOut(auth);closeProfile();toast("Logged out 👋","ok");};
 
-window.fmtUser=(inp)=>{
-  let v=inp.value.replace(/[^@a-zA-Z0-9_]/g,"");
-  if(!v.startsWith("@"))v="@"+v.replace(/@/g,"");
-  inp.value=v;
-};
+window.fmtUser=(inp)=>{let v=inp.value.replace(/[^@a-zA-Z0-9_]/g,"");if(!v.startsWith("@"))v="@"+v.replace(/@/g,"");inp.value=v;};
 
-window.saveUsername=async()=>{
-  const uname=document.getElementById("usernameInput").value.trim();
-  const err=document.getElementById("unErr"),ok=document.getElementById("unOk");
-  err.classList.remove("show");ok.classList.remove("show");
-  if(!uname.startsWith("@")||uname.length<2){showAlert(err,"Must start with @ and have at least 1 char.");return;}
-  if(!/^@[a-zA-Z0-9_]+$/.test(uname)){showAlert(err,"Only letters, numbers, underscores.");return;}
-  if(uname.length>20){showAlert(err,"Max 20 characters.");return;}
-  const taken=await get(ref(db,"usernames/"+uname));
-  if(taken.exists()){showAlert(err,"Username taken. Try another!");return;}
-  await set(ref(db,"users/"+user.uid),{username:uname,email:user.email,score:0});
-  await set(ref(db,"usernames/"+uname),user.uid);
-  await set(ref(db,"leaderboard/"+user.uid),{username:uname,score:0});
-  userData={username:uname,email:user.email,score:0};
-  showAlert(ok,"Welcome, "+uname+"!");
-  setTimeout(()=>enterApp(),900);
-};
+window.saveUsername=async()=>{const uname=document.getElementById("usernameInput").value.trim(),err=document.getElementById("unErr"),ok=document.getElementById("unOk");err.classList.remove("show");ok.classList.remove("show");if(!uname.startsWith("@")||uname.length<2){showAlert(err,"Must start with @ and have at least 1 char.");return;}if(!/^@[a-zA-Z0-9_]+$/.test(uname)){showAlert(err,"Only letters, numbers, underscores.");return;}if(uname.length>20){showAlert(err,"Max 20 characters.");return;}const taken=await get(ref(db,"usernames/"+uname));if(taken.exists()){showAlert(err,"Username taken. Try another!");return;}await set(ref(db,"users/"+user.uid),{username:uname,email:user.email,score:0});await set(ref(db,"usernames/"+uname),user.uid);await set(ref(db,"leaderboard/"+user.uid),{username:uname,score:0});userData={username:uname,email:user.email,score:0};showAlert(ok,"Welcome, "+uname+"!");setTimeout(()=>enterApp(),900);};
 
-function enterApp(){
-  document.getElementById("navScore").style.display="block";
-  updateNavUI();
-  show("home");
-  listenScore();
-  startLeaderboard();
-}
+function enterApp(){document.getElementById("navScore").style.display="block";updateNavUI();show("home");listenScore();startLeaderboard();}
 
-function updateNavUI(){
-  if(!userData)return;
-  document.getElementById("navScoreVal").textContent=userData.score||0;
-  document.getElementById("sbUsername").textContent=userData.username||"—";
-  document.getElementById("sbEmail").textContent=userData.email||user?.email||"—";
-  document.getElementById("welcome").textContent="WELCOME BACK, "+(userData.username||"");
-  document.getElementById("homeScore").textContent=userData.score||0;
-}
+function updateNavUI(){if(!userData)return;document.getElementById("navScoreVal").textContent=userData.score||0;document.getElementById("sbUsername").textContent=userData.username||"—";document.getElementById("sbEmail").textContent=userData.email||user?.email||"—";document.getElementById("welcome").textContent="WELCOME BACK, "+(userData.username||"");document.getElementById("homeScore").textContent=userData.score||0;}
 
-function listenScore(){
-  onValue(ref(db,"users/"+user.uid+"/score"),snap=>{
-    if(!snap.exists())return;
-    const s=snap.val();
-    if(userData)userData.score=s;
-    document.getElementById("navScoreVal").textContent=s;
-    document.getElementById("homeScore").textContent=s;
-    document.getElementById("pScore").textContent=s;
-  });
-}
+function listenScore(){onValue(ref(db,"users/"+user.uid+"/score"),snap=>{if(!snap.exists())return;const s=snap.val();if(userData)userData.score=s;document.getElementById("navScoreVal").textContent=s;document.getElementById("homeScore").textContent=s;document.getElementById("pScore").textContent=s;});}
 
-// ── LEADERBOARD (only starts after login) ──
-function startLeaderboard(){
-  document.getElementById("leaderboard").innerHTML=`
-    <div style="text-align:center;padding:30px 10px;">
-      <div style="font-size:40px;margin-bottom:12px;">🚧</div>
-      <div style="font-family:'Orbitron',monospace;font-size:16px;font-weight:900;color:var(--accent);letter-spacing:2px;margin-bottom:8px;">COMING SOON</div>
-      <p style="color:var(--muted);font-size:13px;">Leaderboard is currently under construction.<br>Keep playing and earning points!</p>
-    </div>`;
-    }
+function startLeaderboard(){document.getElementById("leaderboard").innerHTML=`<div style="text-align:center;padding:30px 10px;"><div style="font-size:40px;margin-bottom:12px;">🚧</div><div style="font-family:'Orbitron',monospace;font-size:16px;font-weight:900;color:var(--accent);letter-spacing:2px;margin-bottom:8px;">COMING SOON</div><p style="color:var(--muted);font-size:13px;">Leaderboard is currently under construction.<br>Keep playing and earning points!</p></div>`;}
 
-const questions=[
-  {q:"What is the capital of France?",opts:["Berlin","Madrid","Paris","Rome"],ans:"Paris"},
-  {q:"Which planet is called the Red Planet?",opts:["Venus","Mars","Jupiter","Saturn"],ans:"Mars"},
-  {q:"How many sides does a hexagon have?",opts:["5","6","7","8"],ans:"6"},
-  {q:"What is the largest ocean on Earth?",opts:["Atlantic","Indian","Arctic","Pacific"],ans:"Pacific"},
-  {q:"Who wrote Hamlet?",opts:["Dickens","Shakespeare","Austen","Twain"],ans:"Shakespeare"},
-  {q:"Chemical symbol for Gold?",opts:["Ag","Fe","Au","Cu"],ans:"Au"},
-  {q:"How many continents are there?",opts:["5","6","7","8"],ans:"7"},
-  {q:"Largest land animal?",opts:["Giraffe","Elephant","Hippo","Rhino"],ans:"Elephant"},
-  {q:"Speed of light (approx)?",opts:["300,000 km/s","150,000 km/s","450,000 km/s","200,000 km/s"],ans:"300,000 km/s"},
-  {q:"Most populated country in the world?",opts:["USA","India","China","Russia"],ans:"India"},
-  {q:"What is 15% of 200?",opts:["20","25","30","35"],ans:"30"},
-  {q:"Gas plants absorb from atmosphere?",opts:["Oxygen","Nitrogen","Carbon Dioxide","Hydrogen"],ans:"Carbon Dioxide"},
-  {q:"Bones in an adult human body?",opts:["196","206","216","186"],ans:"206"},
-  {q:"Smallest country in the world?",opts:["Monaco","San Marino","Vatican City","Liechtenstein"],ans:"Vatican City"},
-  {q:"Capital of Japan?",opts:["Osaka","Kyoto","Hiroshima","Tokyo"],ans:"Tokyo"},
-  {q:"Who invented the telephone?",opts:["Edison","Bell","Tesla","Einstein"],ans:"Bell"},
-  {q:"Longest river in the world?",opts:["Amazon","Mississippi","Yangtze","Nile"],ans:"Nile"},
-  {q:"Currency of the UK?",opts:["Euro","Dollar","Pound Sterling","Franc"],ans:"Pound Sterling"},
-  {q:"World War II ended in?",opts:["1943","1944","1945","1946"],ans:"1945"},
-  {q:"Boiling point of water at sea level?",opts:["90°C","95°C","100°C","105°C"],ans:"100°C"},
-  {q:"Players in a soccer team?",opts:["9","10","11","12"],ans:"11"},
-  {q:"Largest planet in the solar system?",opts:["Saturn","Neptune","Uranus","Jupiter"],ans:"Jupiter"},
-  {q:"Element with atomic number 1?",opts:["Helium","Oxygen","Hydrogen","Carbon"],ans:"Hydrogen"},
-  {q:"What does WWW stand for?",opts:["World Wide Web","Wide World Web","Web World Wide","World Web Wide"],ans:"World Wide Web"},
-  {q:"How many hours are in a week?",opts:["148","168","178","188"],ans:"168"},
-  {q:"Country that invented the Olympics?",opts:["Rome","Egypt","Greece","China"],ans:"Greece"},
-  {q:"Largest organ in the human body?",opts:["Heart","Liver","Lung","Skin"],ans:"Skin"},
-  {q:"How many zeros in one million?",opts:["4","5","6","7"],ans:"6"},
-  {q:"Bird that symbolises peace?",opts:["Eagle","Dove","Sparrow","Parrot"],ans:"Dove"},
-  {q:"Capital of Australia?",opts:["Sydney","Melbourne","Canberra","Perth"],ans:"Canberra"},
-  {q:"Teeth in an adult human?",opts:["28","30","32","34"],ans:"32"},
-  {q:"Hottest planet in the solar system?",opts:["Mercury","Mars","Venus","Earth"],ans:"Venus"},
-  {q:"Who painted the Mona Lisa?",opts:["Michelangelo","Raphael","Leonardo da Vinci","Caravaggio"],ans:"Leonardo da Vinci"},
-  {q:"Chemical formula of water?",opts:["H2O","HO2","H2O2","HO"],ans:"H2O"},
-  {q:"The Great Wall is located in?",opts:["Japan","South Korea","China","Mongolia"],ans:"China"},
-  {q:"DNA stands for?",opts:["Deoxyribonucleic Acid","Deoxyribonicotinic Acid","Dextronucleic Acid","Dinitrogen Acid"],ans:"Deoxyribonucleic Acid"},
-  {q:"Square root of 144?",opts:["11","12","13","14"],ans:"12"},
-  {q:"Planet with the most moons?",opts:["Jupiter","Saturn","Uranus","Neptune"],ans:"Saturn"},
-  {q:"Capital of Brazil?",opts:["São Paulo","Rio de Janeiro","Brasília","Salvador"],ans:"Brasília"},
-  {q:"Colors in a rainbow?",opts:["5","6","7","8"],ans:"7"},
-  {q:"Who invented the light bulb?",opts:["Tesla","Einstein","Edison","James Watt"],ans:"Edison"},
-  {q:"Tallest mountain in the world?",opts:["K2","Kangchenjunga","Lhotse","Mount Everest"],ans:"Mount Everest"},
-  {q:"Language spoken in Brazil?",opts:["Spanish","French","English","Portuguese"],ans:"Portuguese"},
-  {q:"Year the internet was publicly launched?",opts:["1989","1991","1993","1995"],ans:"1991"},
-  {q:"2 to the power of 10?",opts:["512","1024","2048","256"],ans:"1024"},
-  {q:"Ocean between Africa and Australia?",opts:["Atlantic","Pacific","Arctic","Indian"],ans:"Indian"},
-  {q:"Hardest natural substance on Earth?",opts:["Gold","Iron","Diamond","Platinum"],ans:"Diamond"},
-  {q:"Strings on a standard guitar?",opts:["4","5","6","7"],ans:"6"},
-  {q:"Capital of Germany?",opts:["Munich","Hamburg","Frankfurt","Berlin"],ans:"Berlin"},
-  {q:"Universal blood donor type?",opts:["A+","B-","AB+","O-"],ans:"O-"}
-];
+const questions=[{q:"What is the capital of France?",opts:["Berlin","Madrid","Paris","Rome"],ans:"Paris"},{q:"Which planet is called the Red Planet?",opts:["Venus","Mars","Jupiter","Saturn"],ans:"Mars"},{q:"How many sides does a hexagon have?",opts:["5","6","7","8"],ans:"6"},{q:"What is the largest ocean on Earth?",opts:["Atlantic","Indian","Arctic","Pacific"],ans:"Pacific"},{q:"Who wrote Hamlet?",opts:["Dickens","Shakespeare","Austen","Twain"],ans:"Shakespeare"},{q:"Chemical symbol for Gold?",opts:["Ag","Fe","Au","Cu"],ans:"Au"},{q:"How many continents are there?",opts:["5","6","7","8"],ans:"7"},{q:"Largest land animal?",opts:["Giraffe","Elephant","Hippo","Rhino"],ans:"Elephant"},{q:"Speed of light (approx)?",opts:["300,000 km/s","150,000 km/s","450,000 km/s","200,000 km/s"],ans:"300,000 km/s"},{q:"Most populated country in the world?",opts:["USA","India","China","Russia"],ans:"India"},{q:"What is 15% of 200?",opts:["20","25","30","35"],ans:"30"},{q:"Gas plants absorb from atmosphere?",opts:["Oxygen","Nitrogen","Carbon Dioxide","Hydrogen"],ans:"Carbon Dioxide"},{q:"Bones in an adult human body?",opts:["196","206","216","186"],ans:"206"},{q:"Smallest country in the world?",opts:["Monaco","San Marino","Vatican City","Liechtenstein"],ans:"Vatican City"},{q:"Capital of Japan?",opts:["Osaka","Kyoto","Hiroshima","Tokyo"],ans:"Tokyo"},{q:"Who invented the telephone?",opts:["Edison","Bell","Tesla","Einstein"],ans:"Bell"},{q:"Longest river in the world?",opts:["Amazon","Mississippi","Yangtze","Nile"],ans:"Nile"},{q:"Currency of the UK?",opts:["Euro","Dollar","Pound Sterling","Franc"],ans:"Pound Sterling"},{q:"World War II ended in?",opts:["1943","1944","1945","1946"],ans:"1945"},{q:"Boiling point of water at sea level?",opts:["90°C","95°C","100°C","105°C"],ans:"100°C"},{q:"Players in a soccer team?",opts:["9","10","11","12"],ans:"11"},{q:"Largest planet in the solar system?",opts:["Saturn","Neptune","Uranus","Jupiter"],ans:"Jupiter"},{q:"Element with atomic number 1?",opts:["Helium","Oxygen","Hydrogen","Carbon"],ans:"Hydrogen"},{q:"What does WWW stand for?",opts:["World Wide Web","Wide World Web","Web World Wide","World Web Wide"],ans:"World Wide Web"},{q:"How many hours are in a week?",opts:["148","168","178","188"],ans:"168"},{q:"Country that invented the Olympics?",opts:["Rome","Egypt","Greece","China"],ans:"Greece"},{q:"Largest organ in the human body?",opts:["Heart","Liver","Lung","Skin"],ans:"Skin"},{q:"How many zeros in one million?",opts:["4","5","6","7"],ans:"6"},{q:"Bird that symbolises peace?",opts:["Eagle","Dove","Sparrow","Parrot"],ans:"Dove"},{q:"Capital of Australia?",opts:["Sydney","Melbourne","Canberra","Perth"],ans:"Canberra"},{q:"Teeth in an adult human?",opts:["28","30","32","34"],ans:"32"},{q:"Hottest planet in the solar system?",opts:["Mercury","Mars","Venus","Earth"],ans:"Venus"},{q:"Who painted the Mona Lisa?",opts:["Michelangelo","Raphael","Leonardo da Vinci","Caravaggio"],ans:"Leonardo da Vinci"},{q:"Chemical formula of water?",opts:["H2O","HO2","H2O2","HO"],ans:"H2O"},{q:"The Great Wall is located in?",opts:["Japan","South Korea","China","Mongolia"],ans:"China"},{q:"DNA stands for?",opts:["Deoxyribonucleic Acid","Deoxyribonicotinic Acid","Dextronucleic Acid","Dinitrogen Acid"],ans:"Deoxyribonucleic Acid"},{q:"Square root of 144?",opts:["11","12","13","14"],ans:"12"},{q:"Planet with the most moons?",opts:["Jupiter","Saturn","Uranus","Neptune"],ans:"Saturn"},{q:"Capital of Brazil?",opts:["São Paulo","Rio de Janeiro","Brasília","Salvador"],ans:"Brasília"},{q:"Colors in a rainbow?",opts:["5","6","7","8"],ans:"7"},{q:"Who invented the light bulb?",opts:["Tesla","Einstein","Edison","James Watt"],ans:"Edison"},{q:"Tallest mountain in the world?",opts:["K2","Kangchenjunga","Lhotse","Mount Everest"],ans:"Mount Everest"},{q:"Language spoken in Brazil?",opts:["Spanish","French","English","Portuguese"],ans:"Portuguese"},{q:"Year the internet was publicly launched?",opts:["1989","1991","1993","1995"],ans:"1991"},{q:"2 to the power of 10?",opts:["512","1024","2048","256"],ans:"1024"},{q:"Ocean between Africa and Australia?",opts:["Atlantic","Pacific","Arctic","Indian"],ans:"Indian"},{q:"Hardest natural substance on Earth?",opts:["Gold","Iron","Diamond","Platinum"],ans:"Diamond"},{q:"Strings on a standard guitar?",opts:["4","5","6","7"],ans:"6"},{q:"Capital of Germany?",opts:["Munich","Hamburg","Frankfurt","Berlin"],ans:"Berlin"},{q:"Universal blood donor type?",opts:["A+","B-","AB+","O-"],ans:"O-"}];
 
 let shuffled=[];
+window.startQuiz=()=>{shuffled=[...questions].sort(()=>Math.random()-0.5);current=0;sessionPts=0;answered=false;document.getElementById("game").innerHTML=`<div class="q-header"><div class="q-count" id="qCount">Q 1 / 50</div><div class="q-pts" id="qPts">⚡ 0</div></div><div class="q-prog-wrap"><div class="q-prog-fill" id="qProg" style="width:0%"></div></div><div class="q-box" id="question"></div><div id="options"></div><div class="feedback" id="feedback"></div><button class="btn btn-outline btn-next" id="btnNext" onclick="nextQ()">NEXT →</button>`;show("game");renderQ();};
 
-// ── FIXED startQuiz: always rebuilds the game div first ──
-window.startQuiz=()=>{
-  shuffled=[...questions].sort(()=>Math.random()-0.5);
-  current=0; sessionPts=0; answered=false;
+function renderQ(){if(current>=shuffled.length){quizDone();return;}const q=shuffled[current],L=["A","B","C","D"];answered=false;document.getElementById("qCount").textContent="Q "+(current+1)+" / "+shuffled.length;document.getElementById("qPts").textContent="⚡ "+((userData&&userData.score)||0);document.getElementById("qProg").style.width=(current/shuffled.length*100)+"%";document.getElementById("question").textContent=q.q;document.getElementById("feedback").className="feedback";document.getElementById("btnNext").classList.remove("show");document.getElementById("options").innerHTML=q.opts.map((o,i)=>`<button class="opt-btn" id="opt${i}" onclick="answerQ(${i})"><div class="opt-letter">${L[i]}</div>${o}</button>`).join("");}
 
-  // Rebuild game div structure so it always works
-  document.getElementById("game").innerHTML=`
-    <div class="q-header">
-      <div class="q-count" id="qCount">Q 1 / 50</div>
-      <div class="q-pts" id="qPts">⚡ 0</div>
-    </div>
-    <div class="q-prog-wrap">
-      <div class="q-prog-fill" id="qProg" style="width:0%"></div>
-    </div>
-    <div class="q-box" id="question"></div>
-    <div id="options"></div>
-    <div class="feedback" id="feedback"></div>
-    <button class="btn btn-outline btn-next" id="btnNext" onclick="nextQ()">NEXT →</button>
-  `;
-
-  show("game");
-  renderQ();
-};
-
-function renderQ(){
-  if(current>=shuffled.length){quizDone();return;}
-  const q=shuffled[current],L=["A","B","C","D"];
-  answered=false;
-  document.getElementById("qCount").textContent=`Q ${current+1} / ${shuffled.length}`;
-  document.getElementById("qPts").textContent=`⚡ ${(userData&&userData.score)||0}`;
-  document.getElementById("qProg").style.width=(current/shuffled.length*100)+"%";
-  document.getElementById("question").textContent=q.q;
-  document.getElementById("feedback").className="feedback";
-  document.getElementById("btnNext").classList.remove("show");
-  document.getElementById("options").innerHTML=q.opts.map((o,i)=>
-    `<button class="opt-btn" id="opt${i}" onclick="answerQ(${i})">
-      <div class="opt-letter">${L[i]}</div>${o}
-    </button>`
-  ).join("");
-}
-
-window.answerQ=async(idx)=>{
-  if(answered)return;
-  answered=true;
-  const q=shuffled[current],chosen=q.opts[idx],isOk=chosen===q.ans;
-  const fb=document.getElementById("feedback");
-  q.opts.forEach((_,i)=>{const b=document.getElementById("opt"+i);if(b)b.disabled=true;});
-  q.opts.forEach((o,i)=>{
-    const b=document.getElementById("opt"+i);if(!b)return;
-    if(o===q.ans)b.classList.add("correct");
-    else if(i===idx)b.classList.add("wrong");
-  });
-  if(isOk){
-    fb.textContent="✅ CORRECT! +25 POINTS";
-    fb.className="feedback correct";
-    sessionPts+=25;
-    await addScore(25);
-  } else {
-    fb.textContent="❌ WRONG! Answer: "+q.ans;
-    fb.className="feedback wrong";
-  }
-  const nb=document.getElementById("btnNext");
-  nb.textContent=current===shuffled.length-1?"SEE RESULTS":"NEXT →";
-  nb.classList.add("show");
-};
+window.answerQ=async(idx)=>{if(answered)return;answered=true;const q=shuffled[current],chosen=q.opts[idx],isOk=chosen===q.ans,fb=document.getElementById("feedback");q.opts.forEach((_,i)=>{const b=document.getElementById("opt"+i);if(b)b.disabled=true;});q.opts.forEach((o,i)=>{const b=document.getElementById("opt"+i);if(!b)return;if(o===q.ans)b.classList.add("correct");else if(i===idx)b.classList.add("wrong");});if(isOk){fb.textContent="✅ CORRECT! +25 POINTS";fb.className="feedback correct";sessionPts+=25;await addScore(25);}else{fb.textContent="❌ WRONG! Answer: "+q.ans;fb.className="feedback wrong";}const nb=document.getElementById("btnNext");nb.textContent=current===shuffled.length-1?"SEE RESULTS":"NEXT →";nb.classList.add("show");};
 
 window.nextQ=()=>{current++;renderQ();};
 
-function quizDone(){
-  document.getElementById("game").innerHTML=`
-    <div style="text-align:center;padding:20px 0;">
-      <div style="font-family:'Orbitron',monospace;font-size:20px;font-weight:900;color:var(--accent);margin-bottom:12px;">🎉 QUIZ COMPLETE!</div>
-      <div style="font-family:'Orbitron',monospace;font-size:48px;font-weight:900;color:var(--gold);text-shadow:0 0 28px rgba(255,214,0,0.4);margin:12px 0;">+${sessionPts}</div>
-      <p style="color:var(--muted);margin-bottom:8px;">Points earned this round</p>
-      <p style="font-family:'Orbitron',monospace;font-size:13px;color:var(--accent);margin-bottom:24px;">TOTAL: ${(userData&&userData.score)||0} PTS</p>
-      <button class="btn btn-primary" onclick="goHome()" style="max-width:280px;margin:0 auto 10px;">BACK TO HOME</button>
-      <button class="btn btn-outline" onclick="startQuiz()" style="max-width:280px;margin:0 auto;">PLAY AGAIN</button>
-    </div>`;
-}
+function quizDone(){document.getElementById("game").innerHTML=`<div style="text-align:center;padding:20px 0;"><div style="font-family:'Orbitron',monospace;font-size:20px;font-weight:900;color:var(--accent);margin-bottom:12px;">🎉 QUIZ COMPLETE!</div><div style="font-family:'Orbitron',monospace;font-size:48px;font-weight:900;color:var(--gold);text-shadow:0 0 28px rgba(255,214,0,0.4);margin:12px 0;">+${sessionPts}</div><p style="color:var(--muted);margin-bottom:8px;">Points earned this round</p><p style="font-family:'Orbitron',monospace;font-size:13px;color:var(--accent);margin-bottom:24px;">TOTAL: ${(userData&&userData.score)||0} PTS</p><button class="btn btn-primary" onclick="goHome()" style="max-width:280px;margin:0 auto 10px;">BACK TO HOME</button><button class="btn btn-outline" onclick="startQuiz()" style="max-width:280px;margin:0 auto;">PLAY AGAIN</button></div>`;}
 
-async function addScore(pts){
-  if(!user||pts<=0)return;
-  await runTransaction(ref(db,"users/"+user.uid+"/score"),cur=>(cur||0)+pts);
-  const snap=await get(ref(db,"users/"+user.uid+"/score"));
-  if(snap.exists())await update(ref(db,"leaderboard/"+user.uid),{username:userData.username,score:snap.val()});
-}
+async function addScore(pts){if(!user||pts<=0)return;await runTransaction(ref(db,"users/"+user.uid+"/score"),cur=>(cur||0)+pts);const snap=await get(ref(db,"users/"+user.uid+"/score"));if(snap.exists())await update(ref(db,"leaderboard/"+user.uid),{username:userData.username,score:snap.val()});}
 
-setInterval(()=>{
-  const now=Math.floor(Date.now()/1000),r=300-(now%300),m=Math.floor(r/60),s=r%60;
-  const el=document.getElementById("timerDisplay");if(!el)return;
-  el.textContent=`${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
-  el.className=r<=30?"urgent":"";
-  const bar=document.getElementById("timerBar");if(bar)bar.style.width=(r/300*100)+"%";
-},1000);
+setInterval(()=>{const now=Math.floor(Date.now()/1000),r=300-(now%300),m=Math.floor(r/60),s=r%60,el=document.getElementById("timerDisplay");if(!el)return;el.textContent=String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");el.className=r<=30?"urgent":"";const bar=document.getElementById("timerBar");if(bar)bar.style.width=(r/300*100)+"%";},1000);
 
-window.openProfile=()=>{
-  closeSidebar();
-  if(userData){
-    document.getElementById("pUsername").textContent=userData.username||"—";
-    document.getElementById("pEmail").textContent=userData.email||user?.email||"—";
-    document.getElementById("pScore").textContent=userData.score||0;
-  }
-  document.getElementById("profilePage").classList.add("open");
-};
+window.openProfile=()=>{closeSidebar();if(userData){document.getElementById("pUsername").textContent=userData.username||"—";document.getElementById("pEmail").textContent=userData.email||user?.email||"—";document.getElementById("pScore").textContent=userData.score||0;}document.getElementById("profilePage").classList.add("open");};
 window.closeProfile=()=>document.getElementById("profilePage").classList.remove("open");
 window.goHome=()=>{closeSidebar();closeProfile();show("home");};
 window.goLeaderboard=()=>{closeSidebar();show("home");setTimeout(()=>document.getElementById("lbSection").scrollIntoView({behavior:"smooth"}),120);};
 window.toggleMenu=()=>{document.getElementById("menuBox").classList.toggle("open");document.getElementById("menuOverlay").classList.toggle("open");};
 function closeSidebar(){document.getElementById("menuBox").classList.remove("open");document.getElementById("menuOverlay").classList.remove("open");}
-window.switchTab=(tab)=>{
-  document.getElementById("loginForm").className=tab==="login"?"active":"";
-  document.getElementById("signupForm").className=tab==="signup"?"active":"";
-  document.getElementById("tabLogin").className="auth-tab"+(tab==="login"?" active":"");
-  document.getElementById("tabSignup").className="auth-tab"+(tab==="signup"?" active":"");
-};
-function showAlert(el,msg){el.textContent=msg;el.classList.add("show");}
-function toast(msg,type){const t=document.getElementById("toast");t.textContent=msg;t.className="show "+type;setTimeout(()=>t.className="",3000);}
-    const ADMIN_UID = "k5Ott7K9tUU2dkFbwMu9DAeBdJ72";
+window.switchTab=(tab)=>{document.getElementById("loginForm").className=tab==="login"?"active":"";document.getElementById("signupForm").className=tab==="signup"?"active":"";document.getElementById("tabLogin").className="auth-tab"+(tab==="login"?" active":"");document.getElementById("tabSignup").className="auth-tab"+(tab==="signup"?" active":"");};
 
-const PAYOUT_OPTIONS = [
-  { id:"gplay_10",  label:"₹10 Google Play",  platform:"gplay",  amount:10, cost:10000 },
-  { id:"gplay_20",  label:"₹20 Google Play",  platform:"gplay",  amount:20, cost:20000 },
-  { id:"gplay_50",  label:"₹50 Google Play",  platform:"gplay",  amount:50, cost:50000 },
-  { id:"amazon_10", label:"₹10 Amazon",        platform:"amazon", amount:10, cost:10000 },
-  { id:"amazon_20", label:"₹20 Amazon",        platform:"amazon", amount:20, cost:20000 },
-  { id:"amazon_50", label:"₹50 Amazon",        platform:"amazon", amount:50, cost:50000 },
-];
+const PAYOUT_OPTIONS=[{id:"gplay_10",label:"Rs10 Google Play",platform:"gplay",amount:10,cost:10000},{id:"gplay_20",label:"Rs20 Google Play",platform:"gplay",amount:20,cost:20000},{id:"gplay_50",label:"Rs50 Google Play",platform:"gplay",amount:50,cost:50000},{id:"amazon_10",label:"Rs10 Amazon",platform:"amazon",amount:10,cost:10000},{id:"amazon_20",label:"Rs20 Amazon",platform:"amazon",amount:20,cost:20000},{id:"amazon_50",label:"Rs50 Amazon",platform:"amazon",amount:50,cost:50000}];
+let currentPlatform="gplay",pendingRedeem=null;
 
-let currentPlatform="gplay", pendingRedeem=null;
-
-window.openPayout=()=>{
-  closeSidebar();
-  const score=(userData&&userData.score)||0;
-  document.getElementById("payoutScore").textContent=score;
-  renderPayoutCards(score);
-  document.getElementById("payoutPage").classList.add("open");
-};
+window.openPayout=()=>{closeSidebar();const score=(userData&&userData.score)||0;document.getElementById("payoutScore").textContent=score;renderPayoutCards(score);document.getElementById("payoutPage").classList.add("open");};
 window.closePayout=()=>document.getElementById("payoutPage").classList.remove("open");
+window.switchPlatform=(platform)=>{currentPlatform=platform;document.getElementById("tabGPlay").className="platform-tab"+(platform==="gplay"?" active":"");document.getElementById("tabAmazon").className="platform-tab"+(platform==="amazon"?" active":"");renderPayoutCards((userData&&userData.score)||0);};
 
-window.switchPlatform=(platform)=>{
-  currentPlatform=platform;
-  document.getElementById("tabGPlay").className="platform-tab"+(platform==="gplay"?" active":"");
-  document.getElementById("tabAmazon").className="platform-tab"+(platform==="amazon"?" active":"");
-  renderPayoutCards((userData&&userData.score)||0);
-};
+function renderPayoutCards(score){const options=PAYOUT_OPTIONS.filter(o=>o.platform===currentPlatform);document.getElementById("payoutCards").innerHTML=options.map(opt=>{const can=score>=opt.cost,lacking=opt.cost-score;return `<div class="payout-card ${can?"unlocked":"locked"}"><div class="payout-card-left"><h4>${opt.platform==="gplay"?"🎮":"📦"} Rs${opt.amount} ${opt.platform==="gplay"?"Google Play":"Amazon"}</h4><p>${opt.cost.toLocaleString()} points required</p>${can?`<div class="ready">✅ YOU CAN REDEEM THIS!</div>`:`<div class="need">Need ${lacking.toLocaleString()} more points</div>`}</div><button class="btn-redeem ${can?"active":"disabled"}" ${can?`onclick="askConfirm('${opt.id}')"`:"disabled"}>REDEEM</button></div>`;}).join("");}
 
-function renderPayoutCards(score){
-  const options=PAYOUT_OPTIONS.filter(o=>o.platform===currentPlatform);
-  document.getElementById("payoutCards").innerHTML=options.map(opt=>{
-    const can=score>=opt.cost;
-    const lacking=opt.cost-score;
-    return `<div class="payout-card ${can?"unlocked":"locked"}">
-      <div class="payout-card-left">
-        <h4>${opt.platform==="gplay"?"🎮":"📦"} ₹${opt.amount} ${opt.platform==="gplay"?"Google Play":"Amazon"}</h4>
-        <p>${opt.cost.toLocaleString()} points required</p>
-        ${can?`<div class="ready">✅ YOU CAN REDEEM THIS!</div>`:`<div class="need">Need ${lacking.toLocaleString()} more points</div>`}
-      </div>
-      <button class="btn-redeem ${can?"active":"disabled"}" ${can?`onclick="askConfirm('${opt.id}')"`:"disabled"}>REDEEM</button>
-    </div>`;
-  }).join("");
-}
-
-window.askConfirm=(optId)=>{
-  const opt=PAYOUT_OPTIONS.find(o=>o.id===optId);
-  if(!opt)return;
-  pendingRedeem=opt;
-  document.getElementById("confirmText").textContent=`Redeem ${opt.cost.toLocaleString()} points for a ₹${opt.amount} ${opt.platform==="gplay"?"Google Play":"Amazon"} gift card?`;
-  document.getElementById("confirmYesBtn").onclick=()=>doRedeem(opt);
-  document.getElementById("confirmOverlay").classList.add("open");
-};
+window.askConfirm=(optId)=>{const opt=PAYOUT_OPTIONS.find(o=>o.id===optId);if(!opt)return;pendingRedeem=opt;document.getElementById("confirmText").textContent="Redeem "+opt.cost.toLocaleString()+" points for a Rs"+opt.amount+" "+(opt.platform==="gplay"?"Google Play":"Amazon")+" gift card?";document.getElementById("confirmYesBtn").onclick=()=>doRedeem(opt);document.getElementById("confirmOverlay").classList.add("open");};
 window.closeConfirm=()=>{document.getElementById("confirmOverlay").classList.remove("open");pendingRedeem=null;};
 
-async function doRedeem(opt){
-  closeConfirm();
-  if(!user||!userData)return;
-  const score=(userData&&userData.score)||0;
-  if(score<opt.cost){toast("Not enough points!","bad");return;}
-  try{
-    await runTransaction(ref(db,"users/"+user.uid+"/score"),cur=>{
-      if((cur||0)<opt.cost)return;
-      return(cur||0)-opt.cost;
-    });
-    const newSnap=await get(ref(db,"users/"+user.uid+"/score"));
-    const newScore=newSnap.exists()?newSnap.val():0;
-    await update(ref(db,"leaderboard/"+user.uid),{score:newScore});
-    const reqId="req_"+Date.now();
-    await set(ref(db,"payouts/"+reqId),{
-      uid:user.uid,
-      username:userData.username,
-      email:userData.email||user.email,
-      platform:opt.platform,
-      amount:opt.amount,
-      cost:opt.cost,
-      label:opt.label,
-      status:"pending",
-      timestamp:Date.now()
-    });
-    toast("✅ Request submitted! Processing in 24-48hrs.","ok");
-    document.getElementById("payoutScore").textContent=newScore;
-    renderPayoutCards(newScore);
-  }catch(e){toast("Error submitting. Try again.","bad");}
-}
+async function doRedeem(opt){closeConfirm();if(!user||!userData)return;const score=(userData&&userData.score)||0;if(score<opt.cost){toast("Not enough points!","bad");return;}try{await runTransaction(ref(db,"users/"+user.uid+"/score"),cur=>{if((cur||0)<opt.cost)return;return(cur||0)-opt.cost;});const newSnap=await get(ref(db,"users/"+user.uid+"/score"));const newScore=newSnap.exists()?newSnap.val():0;await update(ref(db,"leaderboard/"+user.uid),{score:newScore});const reqId="req_"+Date.now();await set(ref(db,"payouts/"+reqId),{uid:user.uid,username:userData.username,email:userData.email||user.email,platform:opt.platform,amount:opt.amount,cost:opt.cost,label:opt.label,status:"pending",timestamp:Date.now()});toast("✅ Request submitted! Processing in 24-48hrs.","ok");document.getElementById("payoutScore").textContent=newScore;renderPayoutCards(newScore);}catch(e){toast("Error submitting. Try again.","bad");}}
 
 let adminTaps=0,adminTimer=null;
-window.adminTap=()=>{
-  adminTaps++;
-  clearTimeout(adminTimer);
-  adminTimer=setTimeout(()=>adminTaps=0,2000);
-  if(adminTaps>=5){
-    adminTaps=0;
-    if(user&&user.uid===ADMIN_UID)openAdmin();
-    else toast("Access denied 🚫","bad");
-  }
-};
+window.adminTap=()=>{adminTaps++;clearTimeout(adminTimer);adminTimer=setTimeout(()=>adminTaps=0,2000);if(adminTaps>=5){adminTaps=0;if(user&&user.uid===ADMIN_UID)openAdmin();else toast("Access denied 🚫","bad");}};
 
-window.openAdmin=()=>{
-  document.getElementById("adminPage").classList.add("open");
-  loadAdminPayouts();
-  loadGiftLog();
-};
+window.openAdmin=()=>{document.getElementById("adminPage").classList.add("open");loadAdminPayouts();loadGiftLog();};
 window.closeAdmin=()=>document.getElementById("adminPage").classList.remove("open");
 
-function loadAdminPayouts(){
-  onValue(ref(db,"payouts"),snap=>{
-    const list=[];
-    snap.forEach(c=>list.push({id:c.key,...c.val()}));
-    list.sort((a,b)=>b.timestamp-a.timestamp);
-    const el=document.getElementById("adminPayoutList");
-    if(!list.length){el.innerHTML=`<p style="color:var(--muted);text-align:center;padding:30px;">No payout requests yet.</p>`;return;}
-    el.innerHTML=list.map(r=>{
-      const date=new Date(r.timestamp).toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"});
-      const sc=r.status==="approved"?"status-approved":r.status==="rejected"?"status-rejected":"status-pending";
-      const st=r.status==="approved"?"✅ APPROVED":r.status==="rejected"?"❌ REJECTED":"⏳ PENDING";
-      return `<div class="admin-req-card">
-        <h4>${r.username}</h4>
-        <p class="req-detail">🎁 ${r.label} &nbsp;|&nbsp; 📧 ${r.email}</p>
-        <p class="req-detail">🕐 ${date}</p>
-        <div class="status-badge ${sc}">${st}</div>
-        ${r.status==="pending"?`<div class="admin-btns">
-          <button class="btn-approve" onclick="approveRequest('${r.id}')">✅ APPROVE</button>
-          <button class="btn-reject" onclick="rejectRequest('${r.id}')">❌ REJECT</button>
-        </div>`:""}
-      </div>`;
-    }).join("");
-  });
-}
+function loadAdminPayouts(){onValue(ref(db,"payouts"),snap=>{const list=[];snap.forEach(c=>list.push({id:c.key,...c.val()}));list.sort((a,b)=>b.timestamp-a.timestamp);const el=document.getElementById("adminPayoutList");if(!list.length){el.innerHTML=`<p style="color:var(--muted);text-align:center;padding:30px;">No payout requests yet.</p>`;return;}el.innerHTML=list.map(r=>{const date=new Date(r.timestamp).toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"});const sc=r.status==="approved"?"status-approved":r.status==="rejected"?"status-rejected":"status-pending";const st=r.status==="approved"?"✅ APPROVED":r.status==="rejected"?"❌ REJECTED":"⏳ PENDING";return `<div class="admin-req-card"><h4>${r.username}</h4><p class="req-detail">🎁 ${r.label} | 📧 ${r.email}</p><p class="req-detail">🕐 ${date}</p><div class="status-badge ${sc}">${st}</div>${r.status==="pending"?`<div class="admin-btns"><button class="btn-approve" onclick="approveRequest('${r.id}')">✅ APPROVE</button><button class="btn-reject" onclick="rejectRequest('${r.id}')">❌ REJECT</button></div>`:""}</div>`;}).join("");});}
 
-window.approveRequest=async(reqId)=>{
-  await update(ref(db,"payouts/"+reqId),{status:"approved"});
-  toast("Request approved ✅","ok");
-};
+window.approveRequest=async(reqId)=>{await update(ref(db,"payouts/"+reqId),{status:"approved"});toast("Request approved ✅","ok");};
 
-window.giftCoins=async()=>{
-  const uname=document.getElementById("giftUsername").value.trim();
-  const amount=parseInt(document.getElementById("giftAmount").value);
-  const res=document.getElementById("giftResult");
-  res.className="gift-result";
-  if(!uname.startsWith("@")||uname.length<2){res.textContent="❌ Username must start with @";res.className="gift-result bad";return;}
-  if(!amount||isNaN(amount)||amount<1||amount>9999){res.textContent="❌ Amount must be between 1 and 9999";res.className="gift-result bad";return;}
-  const unameSnap=await get(ref(db,"usernames/"+uname));
-  if(!unameSnap.exists()){res.textContent="❌ Username not found. Check spelling.";res.className="gift-result bad";return;}
-  const targetUid=unameSnap.val();
-  await runTransaction(ref(db,"users/"+targetUid+"/score"),cur=>(cur||0)+amount);
-  const newSnap=await get(ref(db,"users/"+targetUid+"/score"));
-  const newScore=newSnap.exists()?newSnap.val():0;
-  await update(ref(db,"leaderboard/"+targetUid),{score:newScore});
-  const logId="gift_"+Date.now();
-  await set(ref(db,"giftlog/"+logId),{
-    toUsername:uname,
-    toUid:targetUid,
-    amount:amount,
-    byUid:user.uid,
-    newScore:newScore,
-    timestamp:Date.now()
-  });
-  res.textContent="✅ "+amount+" coins gifted to "+uname+"! Their new score: "+newScore;
-  res.className="gift-result ok";
-  document.getElementById("giftUsername").value="";
-  document.getElementById("giftAmount").value="";
-  loadGiftLog();
-};
+window.rejectRequest=async(reqId)=>{const snap=await get(ref(db,"payouts/"+reqId));if(!snap.exists())return;const r=snap.val();await runTransaction(ref(db,"users/"+r.uid+"/score"),cur=>(cur||0)+r.cost);const ns=await get(ref(db,"users/"+r.uid+"/score"));if(ns.exists())await update(ref(db,"leaderboard/"+r.uid),{score:ns.val()});await update(ref(db,"payouts/"+reqId),{status:"rejected"});toast("Rejected. Points refunded ↩️","bad");};
 
-function loadGiftLog(){
-  onValue(ref(db,"giftlog"),snap=>{
-    const list=[];
-    snap.forEach(c=>list.push({id:c.key,...c.val()}));
-    list.sort((a,b)=>b.timestamp-a.timestamp);
-    const el=document.getElementById("giftLogList");
-    if(!el)return;
-    if(!list.length){el.innerHTML=`<p style="color:var(--muted);font-size:13px;margin-bottom:16px;">No gifts sent yet.</p>`;return;}
-    el.innerHTML=list.slice(0,10).map(g=>{
-      const date=new Date(g.timestamp).toLocaleDateString("en-IN",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"});
-      return `<div class="gift-log-item">
-        <h5>⚡ +${g.amount} coins → ${g.toUsername}</h5>
-        <p>New total: ${g.newScore} pts &nbsp;|&nbsp; ${date}</p>
-      </div>`;
-    }).join("");
-  });
-    
-window.rejectRequest=async(reqId)=>{
-  const snap=await get(ref(db,"payouts/"+reqId));
-  if(!snap.exists())return;
-  const r=snap.val();
-  await runTransaction(ref(db,"users/"+r.uid+"/score"),cur=>(cur||0)+r.cost);
-  const ns=await get(ref(db,"users/"+r.uid+"/score"));
-  if(ns.exists())await update(ref(db,"leaderboard/"+r.uid),{score:ns.val()});
-  await update(ref(db,"payouts/"+reqId),{status:"rejected"});
-  toast("Rejected. Points refunded ↩️","bad");
-};
-function friendlyErr(code){const m={"auth/user-not-found":"No account with this email.","auth/wrong-password":"Incorrect password.","auth/invalid-credential":"Invalid email or password.","auth/email-already-in-use":"Email already registered.","auth/invalid-email":"Invalid email address.","auth/weak-password":"Password must be at least 6 characters.","auth/network-request-failed":"Network error. Check your connection.","auth/too-many-requests":"Too many attempts. Try again later."};return m[code]||"Something went wrong. Please try again.";}
-</script>
-</body>
-</html>
+window.giftCoins=async()=>{const uname=document.getElementById("giftUsername").value.trim();const amount=parseInt(document.getElementById("giftAmount").value);const res=document.getElementById("giftResult");res.className="gift-result";if(!uname.startsWith("@")||uname.length<2){res.textContent="❌ Username must start with @";res.className="gift-result bad";return;}if(!amount||isNaN(amount)||a  
