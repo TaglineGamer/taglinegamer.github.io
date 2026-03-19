@@ -5,76 +5,79 @@
 <title>Intier Gaming</title>
 
 <style>
-body { margin:0; font-family:Arial; background:linear-gradient(135deg,#0f172a,#020617); color:white; text-align:center;}
-.header { padding:15px; background:#020617; display:flex; justify-content:space-between;}
-.menu,.profileBtn{cursor:pointer;}
-.card{background:#1e293b;padding:20px;border-radius:15px;margin:20px auto;max-width:400px;}
-button{width:80%;padding:12px;margin:8px;border-radius:12px;border:none;background:#22c55e;color:white;}
-input{padding:10px;width:80%;border-radius:10px;border:none;margin:10px;}
-.hidden{display:none;}
-.menuBox{position:absolute;top:60px;left:10px;background:#1e293b;padding:10px;border-radius:10px;}
-.profilePage{position:fixed;top:0;left:0;width:100%;height:100%;background:#020617;display:none;}
+body {
+  margin:0;
+  font-family:Arial;
+  background:linear-gradient(135deg,#0f172a,#020617);
+  color:white;
+  text-align:center;
+}
+.card {
+  background:#1e293b;
+  padding:20px;
+  border-radius:15px;
+  margin:20px auto;
+  max-width:400px;
+}
+button {
+  width:80%;
+  padding:12px;
+  margin:8px;
+  border:none;
+  border-radius:10px;
+  background:#22c55e;
+  color:white;
+}
+input {
+  padding:10px;
+  width:80%;
+  border-radius:10px;
+  border:none;
+  margin:10px;
+}
+.hidden { display:none; }
 </style>
 </head>
 
 <body>
 
-<div class="header">
-  <span class="menu" onclick="toggleMenu()">☰</span>
-  🎮 Intier Gaming
-  <span class="profileBtn" onclick="openProfile()">👤</span>
-</div>
+<h2>🎮 Intier Gaming</h2>
 
-<div id="menuBox" class="menuBox hidden">
-  <p onclick="goHome()">Home</p>
-  <p onclick="openProfile()">Profile</p>
-</div>
-
+<!-- LOGIN -->
 <div class="card" id="login">
-  <h2>Login / Sign Up</h2>
-  <input type="email" id="email">
-  <input type="password" id="password">
-  <button onclick="signup()">Sign Up</button>
+  <h3>Login / Signup</h3>
+  <input type="email" id="email" placeholder="Email">
+  <input type="password" id="password" placeholder="Password">
+  <button onclick="signup()">Signup</button>
   <button onclick="loginUser()">Login</button>
 </div>
 
+<!-- USERNAME -->
 <div class="card hidden" id="usernameBox">
-  <h2>Create Username</h2>
-  <input id="usernameInput">
-  <button onclick="saveUsername()">Save Username</button>
+  <h3>Create Username</h3>
+  <input id="usernameInput" placeholder="username">
+  <button onclick="saveUsername()">Save</button>
 </div>
 
-<div class="card hidden" id="main">
-  <h2 id="welcome"></h2>
-  <button onclick="startQuiz()">▶ Start Quiz</button>
+<!-- HOME -->
+<div class="card hidden" id="home">
+  <h3 id="welcome"></h3>
+  <button onclick="startQuiz()">Start Quiz</button>
   <p id="timer"></p>
 </div>
 
+<!-- GAME -->
 <div class="card hidden" id="game">
   <h3 id="question"></h3>
   <div id="options"></div>
   <p id="score"></p>
 </div>
 
-<div class="card">
-  <h3>🏆 Leaderboard</h3>
-  <ul id="leaderboard"></ul>
-</div>
-
-<div id="profilePage" class="profilePage">
-  <h2>Profile</h2>
-  <p id="pEmail"></p>
-  <p id="pUsername"></p>
-  <p id="pScore"></p>
-  <button onclick="logout()">Logout</button>
-  <button onclick="closeProfile()">Close</button>
-</div>
-
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getDatabase, ref, set, get, update, onValue } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+import { getDatabase, ref, set, get, update } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDgjlWP9Ovp8lI-aS5ypaLUfb1by0ttejY",
@@ -87,9 +90,69 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
 
-let user=null, points=0, current=0;
+let user, points=0, current=0;
 
-// ✅ 50 QUESTIONS
+// UI SWITCH
+function show(id){
+  ["login","usernameBox","home","game"].forEach(i=>{
+    document.getElementById(i).classList.add("hidden");
+  });
+  document.getElementById(id).classList.remove("hidden");
+}
+
+// AUTH STATE
+onAuthStateChanged(auth, async(u)=>{
+  if(u){
+    user=u;
+
+    let snap = await get(ref(db,"users/"+user.uid));
+    if(snap.exists()){
+      document.getElementById("welcome").innerText="Welcome "+snap.val().username;
+      show("home");
+    } else {
+      show("usernameBox");
+    }
+  } else {
+    show("login");
+  }
+});
+
+// SIGNUP
+window.signup = async ()=>{
+  try{
+    await createUserWithEmailAndPassword(auth,email.value,password.value);
+    alert("Signup success");
+  }catch(e){
+    alert(e.message);
+  }
+};
+
+// LOGIN
+window.loginUser = async ()=>{
+  try{
+    await signInWithEmailAndPassword(auth,email.value,password.value);
+    alert("Login success");
+  }catch(e){
+    alert(e.message);
+  }
+};
+
+// USERNAME
+window.saveUsername = async ()=>{
+  let uname = usernameInput.value.trim();
+
+  if(uname.includes(" ")) return alert("No spaces");
+  uname = "@"+uname;
+
+  await set(ref(db,"users/"+user.uid),{
+    username: uname,
+    score: 0
+  });
+
+  show("home");
+};
+
+// QUESTIONS (50)
 let questions = [
 {q:"2+2?",options:["3","4","5"],answer:"4"},
 {q:"5+5?",options:["10","11","12"],answer:"10"},
@@ -111,47 +174,52 @@ let questions = [
 {q:"9+1?",options:["10","11","9"],answer:"10"},
 {q:"8+2?",options:["10","9","11"],answer:"10"},
 {q:"7+2?",options:["9","10","8"],answer:"9"},
-{q:"5+3?",options:["8","7","9"],answer:"8"},
-{q:"4+6?",options:["10","9","8"],answer:"10"},
-{q:"2+8?",options:["10","9","11"],answer:"10"},
-{q:"3+7?",options:["10","9","8"],answer:"10"},
-{q:"1+9?",options:["10","11","9"],answer:"10"},
-{q:"10+1?",options:["11","12","10"],answer:"11"},
-{q:"2+5?",options:["7","6","8"],answer:"7"},
-{q:"3+5?",options:["8","7","9"],answer:"8"},
-{q:"4+5?",options:["9","8","10"],answer:"9"},
-{q:"6+3?",options:["9","8","10"],answer:"9"},
-{q:"7+4?",options:["11","10","12"],answer:"11"},
-{q:"8+1?",options:["9","10","8"],answer:"9"},
-{q:"9+2?",options:["11","10","12"],answer:"11"},
-{q:"5+4?",options:["9","8","10"],answer:"9"},
-{q:"6+4?",options:["10","9","11"],answer:"10"},
-{q:"7+5?",options:["12","11","13"],answer:"12"},
-{q:"8+3?",options:["11","10","12"],answer:"11"},
-{q:"9+3?",options:["12","11","13"],answer:"12"},
-{q:"2+6?",options:["8","7","9"],answer:"8"},
-{q:"3+6?",options:["9","8","10"],answer:"9"},
-{q:"4+7?",options:["11","10","12"],answer:"11"},
-{q:"5+6?",options:["11","10","12"],answer:"11"},
-{q:"6+5?",options:["11","10","12"],answer:"11"},
-{q:"7+6?",options:["13","12","14"],answer:"13"},
 {q:"HTML stands for?",options:["Hyper Text Markup Language","High Text","None"],answer:"Hyper Text Markup Language"},
 {q:"CSS used for?",options:["Styling","Database","Logic"],answer:"Styling"},
-{q:"JS stands for?",options:["JavaScript","JavaStyle","None"],answer:"JavaScript"},
-{q:"Capital of India?",options:["Delhi","Mumbai","Goa"],answer:"Delhi"},
-{q:"Largest planet?",options:["Earth","Mars","Jupiter"],answer:"Jupiter"},
-{q:"Sun is a?",options:["Star","Planet","Moon"],answer:"Star"}
+{q:"JS stands for?",options:["JavaScript","JavaStyle","None"],answer:"JavaScript"}
 ];
 
-// RANDOM SHUFFLE
-window.startQuiz=()=>{
+// START QUIZ
+window.startQuiz = ()=>{
   questions.sort(()=>Math.random()-0.5);
   points=0;
   current=0;
-  main.classList.add("hidden");
-  game.classList.remove("hidden");
+  show("game");
   showQuestion();
 };
+
+function showQuestion(){
+  let q=questions[current];
+  question.innerText=q.q;
+
+  let html="";
+  q.options.forEach(o=>{
+    html+=`<button onclick="answer('${o}')">${o}</button>`;
+  });
+
+  options.innerHTML=html;
+}
+
+// ANSWER
+window.answer = async(ans)=>{
+  if(ans===questions[current].answer) points+=25;
+  current++;
+
+  if(current<questions.length){
+    showQuestion();
+  } else {
+    show("home");
+  }
+
+  score.innerText="Points: "+points;
+};
+
+// TIMER
+setInterval(()=>{
+  let now=Math.floor(Date.now()/1000);
+  let r=300-(now%300);
+  timer.innerText="Refresh in "+Math.floor(r/60)+":"+String(r%60).padStart(2,"0");
+},1000);
 
 </script>
 
