@@ -59,12 +59,17 @@
 <div class="card" id="login">
   <h2>Enter Your Name</h2>
   <input type="text" id="playerName" placeholder="Your name">
-  <button onclick="startGame()">Start Game</button>
+  <button onclick="saveName()">Continue</button>
+</div>
+
+<!-- START SCREEN -->
+<div class="card hidden" id="startScreen">
+  <h2 id="welcome"></h2>
+  <button onclick="startQuiz()">▶ Start Quiz</button>
 </div>
 
 <!-- GAME -->
 <div class="card hidden" id="game">
-  <h2 id="welcome"></h2>
   <h3 id="question"></h3>
   <div id="options"></div>
   <p id="score">Points: 0</p>
@@ -82,7 +87,7 @@ let questions = [
   {q:"3x3?", options:["6","9","12"], answer:"9"}
 ];
 
-// 🔥 Load saved data
+// Load saved data
 window.onload = function(){
   let savedName = localStorage.getItem("player");
   let savedPoints = localStorage.getItem("points");
@@ -92,16 +97,13 @@ window.onload = function(){
     points = savedPoints ? parseInt(savedPoints) : 0;
 
     document.getElementById("login").classList.add("hidden");
-    document.getElementById("game").classList.remove("hidden");
+    document.getElementById("startScreen").classList.remove("hidden");
 
     document.getElementById("welcome").innerText = "Welcome back " + player;
-    document.getElementById("score").innerText = "Points: " + points;
-
-    showQuestion();
   }
 };
 
-function startGame(){
+function saveName(){
   player = document.getElementById("playerName").value;
 
   if(player === ""){
@@ -112,14 +114,18 @@ function startGame(){
   localStorage.setItem("player", player);
 
   document.getElementById("login").classList.add("hidden");
-  document.getElementById("game").classList.remove("hidden");
+  document.getElementById("startScreen").classList.remove("hidden");
 
   document.getElementById("welcome").innerText = "Welcome " + player;
+}
 
-  points = 0;
+function startQuiz(){
+  document.getElementById("startScreen").classList.add("hidden");
+  document.getElementById("game").classList.remove("hidden");
+
   current = 0;
-
   showQuestion();
+  updateScore();
 }
 
 function showQuestion(){
@@ -139,7 +145,6 @@ function checkAnswer(ans){
     points += 25;
   }
 
-  // 🔥 Save points
   localStorage.setItem("points", points);
 
   current++;
@@ -151,6 +156,10 @@ function checkAnswer(ans){
     document.getElementById("options").innerHTML = "";
   }
 
+  updateScore();
+}
+
+function updateScore(){
   document.getElementById("score").innerText = "Points: " + points;
 }
 
