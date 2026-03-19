@@ -27,7 +27,6 @@ button {
   border:none;
   background:#22c55e;
   color:white;
-  font-size:16px;
 }
 input {
   padding:10px;
@@ -51,7 +50,7 @@ input {
 <input type="password" id="password" placeholder="Password"><br>
 <button onclick="signup()">Signup</button>
 <button onclick="login()">Login</button>
-<button onclick="googleLogin()">Login with Google</button>
+<button onclick="googleLogin()">Google Login</button>
 </div>
 
 <!-- USERNAME -->
@@ -91,18 +90,13 @@ const firebaseConfig = {
   authDomain: "intier-gaming.firebaseapp.com",
   databaseURL: "https://intier-gaming-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "intier-gaming",
-  storageBucket: "intier-gaming.appspot.com",
-  messagingSenderId: "90246031418",
-  appId: "1:90246031418:web:72ca63ea6b6c8f0b46d03"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
 
-let user = null;
-let points = 0;
-let current = 0;
+let user=null, points=0, current=0;
 
 const questions = [
  {q:"2+2?", options:["3","4","5"], answer:"4"},
@@ -112,8 +106,8 @@ const questions = [
 
 onAuthStateChanged(auth, async(u)=>{
  if(u){
-  user = u;
-  await checkUsername();
+  user=u;
+  checkUsername();
  } else {
   show("login");
  }
@@ -127,7 +121,7 @@ function show(id){
 }
 
 async function checkUsername(){
- const snap = await get(ref(db,"users/"+user.uid));
+ const snap=await get(ref(db,"users/"+user.uid));
  if(snap.exists()){
   document.getElementById("welcome").innerText="Welcome "+snap.val().username;
   show("home");
@@ -136,67 +130,70 @@ async function checkUsername(){
  }
 }
 
-window.signup = async ()=>{
+window.signup=async()=>{
  try{
   await createUserWithEmailAndPassword(auth,email.value,password.value);
  }catch(e){
-  alert(e.message);
+  alert("Signup error: "+e.message);
  }
 }
 
-window.login = async ()=>{
+window.login=async()=>{
  try{
   await signInWithEmailAndPassword(auth,email.value,password.value);
  }catch(e){
-  alert(e.message);
+  alert("Login error: "+e.message);
  }
 }
 
-window.googleLogin = async ()=>{
+window.googleLogin=async()=>{
  try{
   const provider=new GoogleAuthProvider();
   await signInWithPopup(auth,provider);
  }catch(e){
-  alert(e.message);
+  alert("Google error: "+e.message);
  }
 }
 
-window.logout = ()=>{
- signOut(auth);
-}
+window.logout=()=>signOut(auth);
 
-window.saveUsername = async ()=>{
- let uname = document.getElementById("username").value.trim();
+// ✅ USERNAME VALIDATION FIX
+window.saveUsername=async()=>{
+ let uname=document.getElementById("username").value.trim();
 
- if(uname.length < 3){
-  alert("Username too short");
+ // auto add @
+ if(!uname.startsWith("@")) uname="@"+uname;
+
+ // no spaces
+ if(uname.includes(" ")){
+  alert("No spaces allowed!");
   return;
  }
 
- if(!uname.startsWith("@")){
-  alert("Username must start with @");
+ // allowed chars
+ if(!/^@[a-zA-Z0-9_@!#$%^&*]+$/.test(uname)){
+  alert("Invalid characters!");
   return;
  }
 
- const check = await get(ref(db,"usernames/"+uname));
+ const check=await get(ref(db,"usernames/"+uname));
  if(check.exists()){
-  alert("Username already taken!");
+  alert("Username taken!");
   return;
  }
 
  await set(ref(db,"users/"+user.uid),{
-  username: uname,
+  username:uname,
   score:0
  });
 
  await set(ref(db,"usernames/"+uname),user.uid);
 
- await checkUsername();
+ checkUsername();
 }
 
-window.startQuiz = ()=>{
- points=0;
- current=0;
+window.startQuiz=()=>{
+ points=0; current=0;
  show("game");
  showQuestion();
 }
@@ -204,17 +201,17 @@ window.startQuiz = ()=>{
 function showQuestion(){
  let q=questions[current];
  document.getElementById("question").innerText=q.q;
+
  let html="";
  q.options.forEach(opt=>{
   html+=`<button onclick="checkAnswer('${opt}')">${opt}</button>`;
  });
+
  document.getElementById("options").innerHTML=html;
 }
 
-window.checkAnswer = async(ans)=>{
- if(ans===questions[current].answer){
-  points+=25;
- }
+window.checkAnswer=async(ans)=>{
+ if(ans===questions[current].answer) points+=25;
 
  current++;
 
@@ -223,36 +220,23 @@ window.checkAnswer = async(ans)=>{
  } else {
   document.getElementById("question").innerText="🎉 Finished!";
   document.getElementById("options").innerHTML="";
-  
-  await saveScore();
+  await push(ref(db,"leaderboard"),{
+    uid:user.uid,score:points
+  });
  }
 
  document.getElementById("score").innerText="Points: "+points;
 }
 
-async function saveScore(){
- await push(ref(db,"leaderboard"),{
-  uid:user.uid,
-  score:points
+// leaderboard
+onValue(ref(db,"leaderboard"),snap=>{
+ let html="";
+ snap.forEach(child=>{
+  html+=`<li>${child.val().score}</li>`;
  });
-
- await set(ref(db,"users/"+user.uid+"/score"),points);
-}
-
-function loadLeaderboard(){
- onValue(ref(db,"leaderboard"),snap=>{
-  let html="";
-  snap.forEach(child=>{
-   let d=child.val();
-   html+=`<li>${d.score}</li>`;
-  });
-  document.getElementById("leaderboard").innerHTML=html;
- });
-}
-
-loadLeaderboard();
-
+ document.getElementById("leaderboard").innerHTML=html;
+});
 </script>
 
 </body>
-  </html>
+</html>
