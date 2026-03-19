@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Intier Gaming</title>
+  <style>
+    body {
+      font-family: Arial;
+      text-align: center;
+      background: #0f172a;
+      color: white;
+    }
+    button {
+      padding: 10px 20px;
+      margin-top: 15px;
+      border-radius: 10px;
+      border: none;
+      background: #22c55e;
+      color: white;
+      font-size: 16px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>🎮 Intier Gaming</h1>
+  <p>Play quizzes and earn points!</p>
+
+  <h2 id="question">Click Start</h2>
+
+  <div id="options"></div>
+
+  <button onclick="startQuiz()">Start Quiz</button>
+
+  <h3 id="score">Points: 0</h3>
+
+<script>
+
+let questions = [
+  {
+    q: "What is 2 + 2?",
+    options: ["3", "4", "5"],
+    answer: "4"
+  },
+  {
+    q: "Capital of India?",
+    options: ["Delhi", "Mumbai", "Kolkata"],
+    answer: "Delhi"
+  }
+];
+
+let current = 0;
+let points = 0;
+
+function startQuiz() {
+  current = 0;
+  points = 0;
+  showQuestion();
+}
+
+function showQuestion() {
+  let q = questions[current];
+  document.getElementById("question").innerText = q.q;
+
+  let html = "";
+  q.options.forEach(opt => {
+    html += `<button onclick="checkAnswer('${opt}')">${opt}</button><br>`;
+  });
+
+  document.getElementById("options").innerHTML = html;
+}
+
+function checkAnswer(ans) {
+  if(ans === questions[current].answer){
+    points += 25;
+  }
+
+  current++;
+
+  if(current < questions.length){
+    showQuestion();
+  } else {
+    document.getElementById("question").innerText = "Quiz Finished!";
+    document.getElementById("options").innerHTML = "";
+  }
+
+  document.getElementById("score").innerText = "Points: " + points;
+}
+
+</script>
+
+</body>
+</html>
