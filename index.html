@@ -82,7 +82,7 @@
   <ul id="leaderboard"></ul>
 </div>
 
-<!-- Firebase (NO MODULE → BUTTONS WORK) -->
+<!-- Firebase v8 (simple + stable) -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
@@ -90,7 +90,7 @@
 const firebaseConfig = {
   apiKey: "AIzaSyDgjlWP9Ovp8lI-aS5ypaLUfb1by0ttejY",
   authDomain: "intier-gaming.firebaseapp.com",
-  databaseURL: "https://intier-gaming-default-rtdb.firebaseio.com",
+  databaseURL: "https://intier-gaming-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "intier-gaming",
   storageBucket: "intier-gaming.firebasestorage.app",
   messagingSenderId: "90246031418",
@@ -100,7 +100,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-// ---------------- VARIABLES ----------------
+// VARIABLES
 let player = "";
 let points = 0;
 let current = 0;
@@ -111,7 +111,7 @@ let questions = [
   {q:"3x3?", options:["6","9","12"], answer:"9"}
 ];
 
-// ---------------- LOAD ----------------
+// LOAD
 window.onload = function(){
   loadLeaderboard();
 
@@ -123,13 +123,13 @@ window.onload = function(){
     document.getElementById("startScreen").classList.remove("hidden");
     document.getElementById("welcome").innerText = "Welcome " + player;
   }
-}
+};
 
-// ---------------- NAME ----------------
+// SAVE NAME
 function saveName(){
   player = document.getElementById("playerName").value;
 
-  if(player == ""){
+  if(player === ""){
     alert("Enter your name!");
     return;
   }
@@ -141,7 +141,7 @@ function saveName(){
   document.getElementById("welcome").innerText = "Welcome " + player;
 }
 
-// ---------------- QUIZ ----------------
+// START QUIZ
 function startQuiz(){
   points = 0;
   current = 0;
@@ -152,9 +152,9 @@ function startQuiz(){
   showQuestion();
 }
 
+// SHOW QUESTION
 function showQuestion(){
   let q = questions[current];
-
   document.getElementById("question").innerText = q.q;
 
   let html = "";
@@ -165,6 +165,7 @@ function showQuestion(){
   document.getElementById("options").innerHTML = html;
 }
 
+// CHECK ANSWER
 function checkAnswer(ans){
   if(ans === questions[current].answer){
     points += 25;
@@ -184,7 +185,7 @@ function checkAnswer(ans){
   document.getElementById("score").innerText = "Points: " + points;
 }
 
-// ---------------- FIREBASE ----------------
+// SAVE SCORE (FIREBASE)
 function saveScore(){
   db.ref("leaderboard").push({
     name: player,
@@ -192,12 +193,13 @@ function saveScore(){
   });
 }
 
+// LOAD LEADERBOARD
 function loadLeaderboard(){
   db.ref("leaderboard").on("value", snapshot => {
     let html = "";
 
     snapshot.forEach(child => {
-      const data = child.val();
+      let data = child.val();
       html += `<li>${data.name} - ${data.score}</li>`;
     });
 
