@@ -357,7 +357,24 @@
       <div style="font-family:'Orbitron',monospace;font-size:18px;font-weight:900;color:var(--gold);">⚙️ ADMIN PANEL</div>
       <button class="iconBtn" onclick="closeAdmin()">✕</button>
     </div>
-    <div style="font-family:'Orbitron',monospace;font-size:12px;color:var(--muted);letter-spacing:2px;margin-bottom:16px;">ONGOING PAYOUT REQUESTS</div>
+    <div class="gift-section">
+      <h3>🎁 GIFT COINS TO PLAYER</h3>
+      <div class="gift-row">
+        <div class="gift-inp-wrap">
+          <label>Username (with @)</label>
+          <input class="gift-inp" id="giftUsername" placeholder="@PlayerName">
+        </div>
+        <div class="gift-inp-wrap" style="max-width:110px;">
+          <label>Coins (max 9999)</label>
+          <input class="gift-inp" id="giftAmount" type="number" min="1" max="9999" placeholder="500">
+        </div>
+      </div>
+      <button class="btn-gift" style="width:100%;margin-top:10px;" onclick="giftCoins()">⚡ SEND GIFT</button>
+      <div class="gift-result" id="giftResult"></div>
+    </div>
+    <div style="font-family:'Orbitron',monospace;font-size:12px;color:var(--muted);letter-spacing:2px;margin-bottom:12px;">🎁 RECENT GIFTS</div>
+    <div id="giftLogList"></div>
+    <div style="font-family:'Orbitron',monospace;font-size:12px;color:var(--muted);letter-spacing:2px;margin:16px 0 12px;">ONGOING PAYOUT REQUESTS</div>
     <div id="adminPayoutList">
       <p style="color:var(--muted);text-align:center;padding:30px;">Loading...</p>
     </div>
