@@ -82,22 +82,23 @@
   <ul id="leaderboard"></ul>
 </div>
 
-<script type="module">
+<!-- Firebase (NO MODULE → BUTTONS WORK) -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
-
+<script>
 const firebaseConfig = {
   apiKey: "AIzaSyDgjlWP9Ovp8lI-aS5ypaLUfb1by0ttejY",
   authDomain: "intier-gaming.firebaseapp.com",
+  databaseURL: "https://intier-gaming-default-rtdb.firebaseio.com",
   projectId: "intier-gaming",
   storageBucket: "intier-gaming.firebasestorage.app",
   messagingSenderId: "90246031418",
   appId: "1:90246031418:web:72ca63ea6b6c8f0bf46d03"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
 // ---------------- VARIABLES ----------------
 let player = "";
@@ -185,18 +186,14 @@ function checkAnswer(ans){
 
 // ---------------- FIREBASE ----------------
 function saveScore(){
-  const scoreRef = ref(db, "leaderboard");
-
-  push(scoreRef, {
+  db.ref("leaderboard").push({
     name: player,
     score: points
   });
 }
 
 function loadLeaderboard(){
-  const scoreRef = ref(db, "leaderboard");
-
-  onValue(scoreRef, (snapshot) => {
+  db.ref("leaderboard").on("value", snapshot => {
     let html = "";
 
     snapshot.forEach(child => {
@@ -207,7 +204,6 @@ function loadLeaderboard(){
     document.getElementById("leaderboard").innerHTML = html;
   });
 }
-
 </script>
 
 </body>
