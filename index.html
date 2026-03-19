@@ -200,7 +200,11 @@
   <div class="logo">INTIER<span>.</span>GG</div>
   <div class="nav-right">
     <div id="navScore">⚡ <span id="navScoreVal">0</span></div>
-    <button class="iconBtn" onclick="openProfile()">👤</button>
+<div class="notif-btn-wrap">
+  <button class="iconBtn" onclick="openNotif()">🔔</button>
+  <div class="notif-badge" id="notifBadge" style="display:none;">0</div>
+</div>
+<button class="iconBtn" onclick="openProfile()">👤</button>
   </div>
 </div>
 <div id="menuOverlay" onclick="toggleMenu()"></div>
