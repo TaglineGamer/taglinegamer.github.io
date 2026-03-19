@@ -1,269 +1,355 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Intier Gaming</title>
-
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-body {
-  margin:0;
-  font-family:Arial;
-  background:linear-gradient(135deg,#0f172a,#020617);
-  color:white;
-  text-align:center;
-}
-.header {
-  padding:15px;
-  background:#020617;
-  display:flex;
-  justify-content:space-between;
-}
-.menu,.profileBtn{cursor:pointer;font-size:20px;}
-.card {
-  background:#1e293b;
-  padding:20px;
-  border-radius:15px;
-  margin:20px auto;
-  max-width:400px;
-}
-button {
-  width:80%;
-  padding:12px;
-  margin:8px;
-  border:none;
-  border-radius:10px;
-  background:#22c55e;
-  color:white;
-}
-input {
-  padding:10px;
-  width:80%;
-  border-radius:10px;
-  border:none;
-  margin:10px;
-}
-.hidden {display:none;}
-.menuBox {
-  position:absolute;
-  top:60px;
-  left:10px;
-  background:#1e293b;
-  padding:10px;
-  border-radius:10px;
-}
-.profilePage {
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  background:#020617;
-  display:none;
-}
+  :root {
+    --bg:#080c14; --bg2:#0d1320; --bg3:#111927; --card:#131d2e;
+    --border:#1a2a40; --accent:#00e5ff; --accent2:#ff3d71;
+    --gold:#ffd600; --green:#00e676; --text:#ccd6f6; --muted:#4a6080;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--bg); color:var(--text); font-family:'Rajdhani',sans-serif; font-size:16px; min-height:100vh; }
+  body::before { content:''; position:fixed; inset:0; background-image:linear-gradient(rgba(0,229,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,0.025) 1px,transparent 1px); background-size:44px 44px; pointer-events:none; z-index:0; }
+  .header { position:fixed; top:0; left:0; right:0; height:56px; background:rgba(8,12,20,0.97); backdrop-filter:blur(10px); border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; padding:0 16px; z-index:900; }
+  .logo { font-family:'Orbitron',monospace; font-size:17px; font-weight:900; color:var(--accent); letter-spacing:2px; text-shadow:0 0 18px rgba(0,229,255,0.45); }
+  .logo span { color:var(--accent2); }
+  .nav-right { display:flex; align-items:center; gap:10px; }
+  #navScore { display:none; background:rgba(0,229,255,0.1); border:1px solid rgba(0,229,255,0.25); border-radius:20px; padding:4px 12px; font-family:'Orbitron',monospace; font-size:12px; font-weight:700; color:var(--accent); }
+  .iconBtn { background:none; border:1px solid var(--border); border-radius:8px; color:var(--text); width:36px; height:36px; font-size:17px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.2s; }
+  .iconBtn:hover { border-color:var(--accent); color:var(--accent); }
+  #menuBox { position:fixed; top:0; right:-260px; width:260px; height:100%; background:var(--bg2); border-left:1px solid var(--border); z-index:999; transition:right 0.3s ease; display:flex; flex-direction:column; padding-top:66px; }
+  #menuBox.open { right:0; }
+  #menuOverlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:998; }
+  #menuOverlay.open { display:block; }
+  .menu-header { padding:0 18px 16px; border-bottom:1px solid var(--border); margin-bottom:6px; }
+  #sbUsername { font-family:'Orbitron',monospace; font-size:13px; color:var(--accent); font-weight:700; }
+  #sbEmail { font-size:12px; color:var(--muted); margin-top:2px; }
+  .menu-item { display:flex; align-items:center; gap:12px; padding:13px 18px; font-size:15px; font-weight:700; letter-spacing:1px; cursor:pointer; border-left:3px solid transparent; transition:all 0.2s; }
+  .menu-item:hover { background:rgba(0,229,255,0.05); border-left-color:var(--accent); color:var(--accent); }
+  .menu-footer { margin-top:auto; padding:16px 18px; border-top:1px solid var(--border); }
+  .menu-footer button { width:100%; padding:11px; background:rgba(255,61,113,0.1); border:1px solid rgba(255,61,113,0.3); border-radius:10px; color:var(--accent2); font-family:'Rajdhani',sans-serif; font-size:14px; font-weight:700; letter-spacing:1px; cursor:pointer; }
+  .main { padding:68px 16px 30px; max-width:480px; margin:0 auto; position:relative; z-index:1; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:18px; padding:26px 20px; margin-bottom:18px; position:relative; overflow:hidden; }
+  .card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,var(--accent),var(--accent2)); }
+  .card-title { font-family:'Orbitron',monospace; font-size:15px; font-weight:700; color:#fff; margin-bottom:20px; letter-spacing:1px; }
+  .inp { display:block; width:100%; background:var(--bg3); border:1px solid var(--border); border-radius:10px; padding:13px 14px; color:var(--text); font-family:'Rajdhani',sans-serif; font-size:16px; outline:none; margin-bottom:12px; transition:border-color 0.2s; }
+  .inp:focus { border-color:var(--accent); }
+  .inp::placeholder { color:var(--muted); }
+  .btn { display:block; width:100%; padding:13px; border:none; border-radius:10px; font-family:'Rajdhani',sans-serif; font-size:16px; font-weight:800; letter-spacing:1.5px; cursor:pointer; transition:all 0.2s; margin-bottom:10px; text-align:center; }
+  .btn-primary { background:linear-gradient(135deg,var(--accent),#0097a7); color:#080c14; }
+  .btn-primary:hover { opacity:0.88; transform:translateY(-1px); }
+  .btn-outline { background:rgba(0,229,255,0.07); border:1px solid rgba(0,229,255,0.25); color:var(--accent); }
+  .btn-danger { background:rgba(255,61,113,0.1); border:1px solid rgba(255,61,113,0.3); color:var(--accent2); }
+  .auth-tabs { display:flex; background:var(--bg3); border:1px solid var(--border); border-radius:10px; padding:3px; margin-bottom:20px; }
+  .auth-tab { flex:1; padding:9px; text-align:center; border-radius:8px; cursor:pointer; font-size:13px; font-weight:700; letter-spacing:1px; color:var(--muted); transition:all 0.2s; }
+  .auth-tab.active { background:rgba(0,229,255,0.12); border:1px solid rgba(0,229,255,0.25); color:var(--accent); }
+  #loginForm,#signupForm { display:none; }
+  #loginForm.active,#signupForm.active { display:block; }
+  .auth-hero { text-align:center; margin-bottom:24px; }
+  .auth-hero h1 { font-family:'Orbitron',monospace; font-size:24px; font-weight:900; color:var(--accent); text-shadow:0 0 22px rgba(0,229,255,0.4); }
+  .auth-hero h1 span { color:var(--accent2); }
+  .auth-hero p { color:var(--muted); font-size:12px; margin-top:4px; letter-spacing:2px; }
+  .alert { border-radius:8px; padding:10px 14px; font-size:13px; font-weight:600; margin-top:10px; display:none; }
+  .alert.show { display:block; }
+  .alert-error { background:rgba(255,61,113,0.1); border:1px solid rgba(255,61,113,0.3); color:var(--accent2); }
+  .alert-success { background:rgba(0,230,118,0.1); border:1px solid rgba(0,230,118,0.3); color:var(--green); }
+  .timer-bar { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px 18px; margin-bottom:16px; display:flex; justify-content:space-between; align-items:center; position:relative; overflow:hidden; }
+  .timer-label { font-size:10px; letter-spacing:2px; color:var(--muted); font-weight:700; text-transform:uppercase; }
+  #timerDisplay { font-family:'Orbitron',monospace; font-size:26px; font-weight:700; color:var(--accent); text-shadow:0 0 16px rgba(0,229,255,0.35); letter-spacing:3px; }
+  #timerDisplay.urgent { color:var(--accent2); animation:blink 0.8s infinite; }
+  @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.5;} }
+  .timer-score { font-family:'Orbitron',monospace; font-size:20px; font-weight:700; color:var(--gold); }
+  .timer-progress-bar { position:absolute; bottom:0; left:0; height:3px; background:linear-gradient(90deg,var(--accent),var(--accent2)); transition:width 1s linear; }
+  .welcome-text { font-family:'Orbitron',monospace; font-size:13px; color:var(--accent); font-weight:700; margin-bottom:16px; letter-spacing:1px; }
+  .quiz-start-card { background:linear-gradient(135deg,rgba(0,229,255,0.07),rgba(0,229,255,0.02)); border:1px solid rgba(0,229,255,0.2); border-radius:14px; padding:20px 16px; margin-bottom:16px; }
+  .quiz-start-card h3 { font-family:'Orbitron',monospace; font-size:15px; font-weight:700; color:#fff; margin-bottom:6px; }
+  .quiz-start-card p { font-size:13px; color:var(--muted); margin-bottom:14px; }
+  .pts-badge { display:inline-block; background:rgba(0,229,255,0.1); border:1px solid rgba(0,229,255,0.2); border-radius:20px; padding:3px 10px; font-size:11px; font-weight:700; color:var(--accent); letter-spacing:1px; margin-bottom:14px; }
+  .q-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+  .q-count { font-size:12px; color:var(--muted); font-weight:700; letter-spacing:1px; }
+  .q-pts { font-family:'Orbitron',monospace; font-size:13px; color:var(--accent); font-weight:700; }
+  .q-prog-wrap { height:4px; background:var(--bg3); border-radius:99px; margin-bottom:20px; overflow:hidden; }
+  .q-prog-fill { height:100%; background:linear-gradient(90deg,var(--accent),var(--accent2)); border-radius:99px; transition:width 0.4s; }
+  .q-box { background:var(--bg3); border:1px solid var(--border); border-radius:12px; padding:18px 16px; margin-bottom:16px; font-size:17px; font-weight:600; line-height:1.5; color:#fff; }
+  #options { display:flex; flex-direction:column; gap:9px; margin-bottom:14px; }
+  .opt-btn { display:flex; align-items:center; gap:12px; width:100%; padding:13px 14px; background:var(--bg3); border:1px solid var(--border); border-radius:11px; color:var(--text); font-family:'Rajdhani',sans-serif; font-size:15px; font-weight:600; text-align:left; cursor:pointer; transition:all 0.2s; }
+  .opt-btn:hover:not(:disabled) { border-color:rgba(0,229,255,0.35); background:rgba(0,229,255,0.05); }
+  .opt-btn.correct { background:rgba(0,230,118,0.12); border-color:var(--green); color:var(--green); }
+  .opt-btn.wrong { background:rgba(255,61,113,0.12); border-color:var(--accent2); color:var(--accent2); }
+  .opt-letter { width:26px; height:26px; border-radius:50%; background:var(--bg); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; font-family:'Orbitron',monospace; flex-shrink:0; }
+  .feedback { text-align:center; padding:11px; border-radius:9px; font-weight:700; font-size:14px; display:none; margin-bottom:12px; letter-spacing:1px; }
+  .feedback.correct { display:block; background:rgba(0,230,118,0.1); border:1px solid rgba(0,230,118,0.3); color:var(--green); }
+  .feedback.wrong { display:block; background:rgba(255,61,113,0.1); border:1px solid rgba(255,61,113,0.3); color:var(--accent2); }
+  .btn-next { display:none; }
+  .btn-next.show { display:block; }
+  .lb-head { font-family:'Orbitron',monospace; font-size:14px; font-weight:700; color:var(--gold); margin-bottom:14px; display:flex; align-items:center; gap:8px; }
+  .lb-head::after { content:''; flex:1; height:1px; background:var(--border); }
+  .lb-row { display:flex; align-items:center; gap:12px; padding:11px 14px; background:var(--bg3); border:1px solid var(--border); border-radius:11px; margin-bottom:8px; }
+  .lb-row:first-child { border-color:rgba(255,214,0,0.35); background:rgba(255,214,0,0.04); }
+  .lb-row:nth-child(2) { border-color:rgba(192,192,210,0.3); }
+  .lb-row:nth-child(3) { border-color:rgba(200,130,60,0.3); }
+  .lb-rank { font-family:'Orbitron',monospace; font-size:13px; font-weight:900; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:var(--bg); color:var(--muted); flex-shrink:0; }
+  .lb-name { flex:1; font-weight:700; font-size:15px; }
+  .lb-score { font-family:'Orbitron',monospace; font-size:14px; font-weight:700; color:var(--accent); }
+  .profilePage { position:fixed; inset:0; background:var(--bg); z-index:990; display:none; overflow-y:auto; }
+  .profilePage.open { display:block; }
+  .profile-inner { max-width:480px; margin:0 auto; padding:70px 16px 30px; position:relative; z-index:1; }
+  .profile-hero { background:var(--card); border:1px solid var(--border); border-radius:18px; padding:28px 20px; text-align:center; margin-bottom:16px; position:relative; overflow:hidden; }
+  .profile-hero::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,var(--accent),var(--accent2)); }
+  .avatar { width:72px; height:72px; border-radius:50%; background:rgba(0,229,255,0.1); border:2px solid rgba(0,229,255,0.25); display:flex; align-items:center; justify-content:center; font-size:34px; margin:0 auto 12px; }
+  #pUsername { font-family:'Orbitron',monospace; font-size:16px; font-weight:700; color:var(--accent); margin-bottom:4px; }
+  #pEmail { font-size:13px; color:var(--muted); }
+  .stats-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px; }
+  .stat-box { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px 12px; text-align:center; }
+  .stat-val { font-family:'Orbitron',monospace; font-size:22px; font-weight:700; color:var(--accent); display:block; }
+  .stat-lbl { font-size:11px; letter-spacing:1.5px; color:var(--muted); font-weight:700; text-transform:uppercase; margin-top:3px; display:block; }
+  .hidden { display:none !important; }
+  #toast { position:fixed; bottom:22px; left:50%; transform:translateX(-50%) translateY(60px); background:var(--card); border:1px solid var(--border); border-radius:10px; padding:11px 20px; font-weight:700; font-size:13px; z-index:9999; transition:transform 0.3s; white-space:nowrap; }
+  #toast.show { transform:translateX(-50%) translateY(0); }
+  #toast.ok { border-color:rgba(0,230,118,0.4); color:var(--green); }
+  #toast.bad { border-color:rgba(255,61,113,0.4); color:var(--accent2); }
+  ::-webkit-scrollbar { width:4px; }
+  ::-webkit-scrollbar-thumb { background:var(--border); border-radius:99px; }
 </style>
 </head>
-
 <body>
-
-<div class="header">
-  <span class="menu" onclick="toggleMenu()">☰</span>
-  🎮 Intier Gaming
-  <span class="profileBtn" onclick="openProfile()">👤</span>
+  <div class="header">
+  <button class="iconBtn" onclick="toggleMenu()">☰</button>
+  <div class="logo">INTIER<span>.</span>GG</div>
+  <div class="nav-right">
+    <div id="navScore">⚡ <span id="navScoreVal">0</span></div>
+    <button class="iconBtn" onclick="openProfile()">👤</button>
+  </div>
 </div>
 
-<div id="menuBox" class="menuBox hidden">
-  <p onclick="goHome()">Home</p>
-  <p onclick="openProfile()">Profile</p>
+<div id="menuOverlay" onclick="toggleMenu()"></div>
+<div id="menuBox">
+  <div class="menu-header">
+    <div id="sbUsername">—</div>
+    <div id="sbEmail">—</div>
+  </div>
+  <div class="menu-item" onclick="goHome()"><span>🏠</span> HOME</div>
+  <div class="menu-item" onclick="openProfile()"><span>👤</span> PROFILE</div>
+  <div class="menu-item" onclick="goLeaderboard()"><span>🏆</span> LEADERBOARD</div>
+  <div class="menu-footer"><button onclick="logout()">LOGOUT</button></div>
 </div>
 
-<div class="card" id="login">
-  <h3>Login / Signup</h3>
-  <input type="email" id="email" placeholder="Email">
-  <input type="password" id="password" placeholder="Password">
-  <button onclick="signup()">Signup</button>
-  <button onclick="loginUser()">Login</button>
+<div class="main">
+  <div class="card" id="login">
+    <div class="auth-hero">
+      <h1>INTIER<span>.</span>GG</h1>
+      <p>QUIZ • COMPETE • WIN</p>
+    </div>
+    <div class="auth-tabs">
+      <div class="auth-tab active" id="tabLogin" onclick="switchTab('login')">LOGIN</div>
+      <div class="auth-tab" id="tabSignup" onclick="switchTab('signup')">SIGN UP</div>
+    </div>
+    <div id="loginForm" class="active">
+      <input class="inp" type="email" id="email" placeholder="Email address">
+      <input class="inp" type="password" id="password" placeholder="Password">
+      <button class="btn btn-primary" onclick="loginUser()">LOGIN</button>
+      <div class="alert alert-error" id="loginErr"></div>
+    </div>
+    <div id="signupForm">
+      <input class="inp" type="email" id="emailS" placeholder="Email address">
+      <input class="inp" type="password" id="passwordS" placeholder="Password (min 6 chars)">
+      <button class="btn btn-primary" onclick="signup()">CREATE ACCOUNT</button>
+      <div class="alert alert-error" id="signupErr"></div>
+      <div class="alert alert-success" id="signupOk"></div>
+    </div>
+  </div>
+
+  <div class="card hidden" id="usernameBox">
+    <div class="card-title">🎮 CHOOSE YOUR TAG</div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:16px;">Letters, numbers and underscores only. Cannot be changed later.</p>
+    <input class="inp" id="usernameInput" placeholder="@YourName" oninput="fmtUser(this)">
+    <button class="btn btn-primary" onclick="saveUsername()">SAVE USERNAME</button>
+    <div class="alert alert-error" id="unErr"></div>
+    <div class="alert alert-success" id="unOk"></div>
+  </div>
+
+  <div class="hidden" id="home">
+    <div class="timer-bar">
+      <div>
+        <div class="timer-label">⏱ NEXT ROUND</div>
+        <div id="timerDisplay">05:00</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="timer-label">YOUR SCORE</div>
+        <div class="timer-score" id="homeScore">0</div>
+      </div>
+      <div class="timer-progress-bar" id="timerBar"></div>
+    </div>
+    <div class="welcome-text" id="welcome"></div>
+    <div class="quiz-start-card">
+      <h3>🧠 GENERAL KNOWLEDGE</h3>
+      <p>50 randomised questions. Beat the leaderboard!</p>
+      <div class="pts-badge">+25 PTS PER CORRECT ANSWER</div>
+      <button class="btn btn-primary" onclick="startQuiz()">▶ START QUIZ</button>
+    </div>
+  </div>
+
+  <div class="hidden" id="game">
+    <div class="q-header">
+      <div class="q-count" id="qCount">Q 1 / 50</div>
+      <div class="q-pts" id="qPts">⚡ 0</div>
+    </div>
+    <div class="q-prog-wrap">
+      <div class="q-prog-fill" id="qProg" style="width:0%"></div>
+    </div>
+    <div class="q-box" id="question"></div>
+    <div id="options"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="btn btn-outline btn-next" id="btnNext" onclick="nextQ()">NEXT →</button>
+  </div>
+
+  <div class="card" id="lbSection">
+    <div class="lb-head">🏆 LEADERBOARD</div>
+    <div id="leaderboard"></div>
+  </div>
 </div>
 
-<div class="card hidden" id="usernameBox">
-  <h3>Create Username</h3>
-  <input id="usernameInput" placeholder="username">
-  <button onclick="saveUsername()">Save</button>
+<div class="profilePage" id="profilePage">
+  <div class="profile-inner">
+    <div class="profile-hero">
+      <div class="avatar">👾</div>
+      <div id="pUsername">—</div>
+      <div id="pEmail">—</div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-box">
+        <span class="stat-val" id="pScore">0</span>
+        <span class="stat-lbl">Total Score</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-val" id="pRank">#—</span>
+        <span class="stat-lbl">Rank</span>
+      </div>
+    </div>
+    <button class="btn btn-danger" onclick="logout()">LOGOUT</button>
+    <button class="btn btn-outline" onclick="closeProfile()">CLOSE</button>
+  </div>
 </div>
 
-<div class="card hidden" id="home">
-  <h3 id="welcome"></h3>
-  <button onclick="startQuiz()">Start Quiz</button>
-  <p id="timer"></p>
-</div>
-
-<div class="card hidden" id="game">
-  <h3 id="question"></h3>
-  <div id="options"></div>
-  <p id="score"></p>
-</div>
-
-<div class="card">
-  <h3>🏆 Leaderboard</h3>
-  <ul id="leaderboard"></ul>
-</div>
-
-<div id="profilePage" class="profilePage">
-  <h2>Profile</h2>
-  <p id="pEmail"></p>
-  <p id="pUsername"></p>
-  <p id="pScore"></p>
-  <button onclick="logout()">Logout</button>
-  <button onclick="closeProfile()">Close</button>
-</div>
-
+<div id="toast"></div>
 <script type="module">
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getDatabase, ref, set, get, update, onValue } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, set, get, update, onValue, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDgjlWP9Ovp8lI-aS5ypaLUfb1by0ttejY",
-  authDomain: "intier-gaming.firebaseapp.com",
-  databaseURL: "https://intier-gaming-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "intier-gaming"
+  apiKey:"AIzaSyDgjlWP9Ovp8lI-aS5ypaLUfb1by0ttejY",
+  authDomain:"intier-gaming.firebaseapp.com",
+  databaseURL:"https://intier-gaming-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:"intier-gaming"
 };
+const app=initializeApp(firebaseConfig), db=getDatabase(app), auth=getAuth(app);
+let user=null,userData=null,current=0,sessionPts=0,answered=false;
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-const auth = getAuth(app);
+function show(id){["login","usernameBox","home","game"].forEach(i=>{const e=document.getElementById(i);if(e)e.classList.add("hidden");});const t=document.getElementById(id);if(t)t.classList.remove("hidden");}
 
-let user=null, points=0, current=0;
+onAuthStateChanged(auth,async(u)=>{if(u){user=u;const s=await get(ref(db,"users/"+u.uid));if(s.exists()){userData=s.val();enterApp();}else show("usernameBox");}else{user=null;userData=null;show("login");document.getElementById("navScore").style.display="none";}});
 
-/* UI SWITCH */
-function show(id){
- ["login","usernameBox","home","game"].forEach(i=>{
-  document.getElementById(i).classList.add("hidden");
- });
- document.getElementById(id).classList.remove("hidden");
-}
+window.signup=async()=>{const e=document.getElementById("emailS").value.trim(),p=document.getElementById("passwordS").value,err=document.getElementById("signupErr"),ok=document.getElementById("signupOk");err.classList.remove("show");ok.classList.remove("show");if(!e||!p){showAlert(err,"Fill in all fields.");return;}try{await createUserWithEmailAndPassword(auth,e,p);showAlert(ok,"Account created! Now set your username.");}catch(ex){showAlert(err,friendlyErr(ex.code));}};
 
-/* AUTH */
-onAuthStateChanged(auth, async(u)=>{
- if(u){
-  user=u;
-  let snap=await get(ref(db,"users/"+user.uid));
-  if(snap.exists()){
-    let d=snap.val();
-    welcome.innerText="Welcome "+d.username;
-    pEmail.innerText=user.email;
-    pUsername.innerText=d.username;
-    pScore.innerText="Score: "+(d.score||0);
-    show("home");
-  } else show("usernameBox");
- } else show("login");
-});
+window.loginUser=async()=>{const e=document.getElementById("email").value.trim(),p=document.getElementById("password").value,err=document.getElementById("loginErr");err.classList.remove("show");if(!e||!p){showAlert(err,"Fill in all fields.");return;}try{await signInWithEmailAndPassword(auth,e,p);}catch(ex){showAlert(err,friendlyErr(ex.code));}};
 
-window.signup=async()=>{
- try{ await createUserWithEmailAndPassword(auth,email.value,password.value);}
- catch(e){alert(e.message);}
-};
+window.logout=()=>{signOut(auth);closeProfile();toast("Logged out 👋","ok");};
 
-window.loginUser=async()=>{
- try{ await signInWithEmailAndPassword(auth,email.value,password.value);}
- catch(e){alert(e.message);}
-};
+window.fmtUser=(inp)=>{let v=inp.value.replace(/[^@a-zA-Z0-9_]/g,"");if(!v.startsWith("@"))v="@"+v.replace(/@/g,"");inp.value=v;};
 
-window.logout=()=>signOut(auth);
+window.saveUsername=async()=>{const uname=document.getElementById("usernameInput").value.trim(),err=document.getElementById("unErr"),ok=document.getElementById("unOk");err.classList.remove("show");ok.classList.remove("show");if(!uname.startsWith("@")||uname.length<2){showAlert(err,"Must start with @ and have at least 1 char.");return;}if(!/^@[a-zA-Z0-9_]+$/.test(uname)){showAlert(err,"Only letters, numbers, underscores.");return;}if(uname.length>20){showAlert(err,"Max 20 characters.");return;}const taken=await get(ref(db,"usernames/"+uname));if(taken.exists()){showAlert(err,"Username taken. Try another!");return;}await set(ref(db,"users/"+user.uid),{username:uname,email:user.email,score:0});await set(ref(db,"usernames/"+uname),user.uid);await set(ref(db,"leaderboard/"+user.uid),{username:uname,score:0});userData={username:uname,email:user.email,score:0};showAlert(ok,"Welcome, "+uname+"!");setTimeout(()=>enterApp(),900);};
 
-/* USERNAME */
-window.saveUsername=async()=>{
- let uname=usernameInput.value.trim();
- if(uname.includes(" ")) return alert("No spaces");
- uname="@"+uname;
+function enterApp(){document.getElementById("navScore").style.display="block";updateNavUI();show("home");listenScore();}
 
- await set(ref(db,"users/"+user.uid),{
-  username:uname,
-  score:0
- });
+function updateNavUI(){if(!userData)return;document.getElementById("navScoreVal").textContent=userData.score||0;document.getElementById("sbUsername").textContent=userData.username||"—";document.getElementById("sbEmail").textContent=userData.email||user?.email||"—";document.getElementById("welcome").textContent="WELCOME BACK, "+(userData.username||"");document.getElementById("homeScore").textContent=userData.score||0;}
 
- show("home");
-};
+function listenScore(){onValue(ref(db,"users/"+user.uid+"/score"),snap=>{if(!snap.exists())return;const s=snap.val();if(userData)userData.score=s;document.getElementById("navScoreVal").textContent=s;document.getElementById("homeScore").textContent=s;document.getElementById("pScore").textContent=s;});}
 
-/* QUESTIONS (50) */
-let questions = Array.from({length:50},(_,i)=>({
- q:`Question ${i+1}: ${i+1}+1?`,
- options:[`${i+2}`,`${i+3}`,`${i}`],
- answer:`${i+2}`
-}));
+const questions=[
+  {q:"What is the capital of France?",opts:["Berlin","Madrid","Paris","Rome"],ans:"Paris"},
+  {q:"Which planet is called the Red Planet?",opts:["Venus","Mars","Jupiter","Saturn"],ans:"Mars"},
+  {q:"How many sides does a hexagon have?",opts:["5","6","7","8"],ans:"6"},
+  {q:"What is the largest ocean on Earth?",opts:["Atlantic","Indian","Arctic","Pacific"],ans:"Pacific"},
+  {q:"Who wrote Hamlet?",opts:["Dickens","Shakespeare","Austen","Twain"],ans:"Shakespeare"},
+  {q:"Chemical symbol for Gold?",opts:["Ag","Fe","Au","Cu"],ans:"Au"},
+  {q:"How many continents are there?",opts:["5","6","7","8"],ans:"7"},
+  {q:"Largest land animal?",opts:["Giraffe","Elephant","Hippo","Rhino"],ans:"Elephant"},
+  {q:"Speed of light (approx)?",opts:["300,000 km/s","150,000 km/s","450,000 km/s","200,000 km/s"],ans:"300,000 km/s"},
+  {q:"Most populated country in the world?",opts:["USA","India","China","Russia"],ans:"India"},
+  {q:"What is 15% of 200?",opts:["20","25","30","35"],ans:"30"},
+  {q:"Gas plants absorb from atmosphere?",opts:["Oxygen","Nitrogen","Carbon Dioxide","Hydrogen"],ans:"Carbon Dioxide"},
+  {q:"Bones in an adult human body?",opts:["196","206","216","186"],ans:"206"},
+  {q:"Smallest country in the world?",opts:["Monaco","San Marino","Vatican City","Liechtenstein"],ans:"Vatican City"},
+  {q:"Capital of Japan?",opts:["Osaka","Kyoto","Hiroshima","Tokyo"],ans:"Tokyo"},
+  {q:"Who invented the telephone?",opts:["Edison","Bell","Tesla","Einstein"],ans:"Bell"},
+  {q:"Longest river in the world?",opts:["Amazon","Mississippi","Yangtze","Nile"],ans:"Nile"},
+  {q:"Currency of the UK?",opts:["Euro","Dollar","Pound Sterling","Franc"],ans:"Pound Sterling"},
+  {q:"World War II ended in?",opts:["1943","1944","1945","1946"],ans:"1945"},
+  {q:"Boiling point of water at sea level?",opts:["90°C","95°C","100°C","105°C"],ans:"100°C"},
+  {q:"Players in a soccer team?",opts:["9","10","11","12"],ans:"11"},
+  {q:"Largest planet in the solar system?",opts:["Saturn","Neptune","Uranus","Jupiter"],ans:"Jupiter"},
+  {q:"Element with atomic number 1?",opts:["Helium","Oxygen","Hydrogen","Carbon"],ans:"Hydrogen"},
+  {q:"What does WWW stand for?",opts:["World Wide Web","Wide World Web","Web World Wide","World Web Wide"],ans:"World Wide Web"},
+  {q:"How many hours are in a week?",opts:["148","168","178","188"],ans:"168"},
+  {q:"Country that invented the Olympics?",opts:["Rome","Egypt","Greece","China"],ans:"Greece"},
+  {q:"Largest organ in the human body?",opts:["Heart","Liver","Lung","Skin"],ans:"Skin"},
+  {q:"How many zeros in one million?",opts:["4","5","6","7"],ans:"6"},
+  {q:"Bird that symbolises peace?",opts:["Eagle","Dove","Sparrow","Parrot"],ans:"Dove"},
+  {q:"Capital of Australia?",opts:["Sydney","Melbourne","Canberra","Perth"],ans:"Canberra"},
+  {q:"Teeth in an adult human?",opts:["28","30","32","34"],ans:"32"},
+  {q:"Hottest planet in the solar system?",opts:["Mercury","Mars","Venus","Earth"],ans:"Venus"},
+  {q:"Who painted the Mona Lisa?",opts:["Michelangelo","Raphael","Leonardo da Vinci","Caravaggio"],ans:"Leonardo da Vinci"},
+  {q:"Chemical formula of water?",opts:["H2O","HO2","H2O2","HO"],ans:"H2O"},
+  {q:"The Great Wall is located in?",opts:["Japan","South Korea","China","Mongolia"],ans:"China"},
+  {q:"DNA stands for?",opts:["Deoxyribonucleic Acid","Deoxyribonicotinic Acid","Dextronucleic Acid","Dinitrogen Acid"],ans:"Deoxyribonucleic Acid"},
+  {q:"Square root of 144?",opts:["11","12","13","14"],ans:"12"},
+  {q:"Planet with the most moons?",opts:["Jupiter","Saturn","Uranus","Neptune"],ans:"Saturn"},
+  {q:"Capital of Brazil?",opts:["São Paulo","Rio de Janeiro","Brasília","Salvador"],ans:"Brasília"},
+  {q:"Colors in a rainbow?",opts:["5","6","7","8"],ans:"7"},
+  {q:"Who invented the light bulb?",opts:["Tesla","Einstein","Edison","James Watt"],ans:"Edison"},
+  {q:"Tallest mountain in the world?",opts:["K2","Kangchenjunga","Lhotse","Mount Everest"],ans:"Mount Everest"},
+  {q:"Language spoken in Brazil?",opts:["Spanish","French","English","Portuguese"],ans:"Portuguese"},
+  {q:"Year the internet was publicly launched?",opts:["1989","1991","1993","1995"],ans:"1991"},
+  {q:"2 to the power of 10?",opts:["512","1024","2048","256"],ans:"1024"},
+  {q:"Ocean between Africa and Australia?",opts:["Atlantic","Pacific","Arctic","Indian"],ans:"Indian"},
+  {q:"Hardest natural substance on Earth?",opts:["Gold","Iron","Diamond","Platinum"],ans:"Diamond"},
+  {q:"Strings on a standard guitar?",opts:["4","5","6","7"],ans:"6"},
+  {q:"Capital of Germany?",opts:["Munich","Hamburg","Frankfurt","Berlin"],ans:"Berlin"},
+  {q:"Universal blood donor type?",opts:["A+","B-","AB+","O-"],ans:"O-"}
+];
 
-/* START QUIZ */
-window.startQuiz=()=>{
- questions.sort(()=>Math.random()-0.5);
- points=0;
- current=0;
- show("game");
- showQuestion();
-};
+let shuffled=[];
+window.startQuiz=()=>{shuffled=[...questions].sort(()=>Math.random()-0.5);current=0;sessionPts=0;answered=false;show("game");renderQ();};
 
-function showQuestion(){
- let q=questions[current];
- question.innerText=q.q;
- options.innerHTML=q.options.map(o=>`<button onclick="answer('${o}')">${o}</button>`).join("");
-}
+function renderQ(){if(current>=shuffled.length){quizDone();return;}const q=shuffled[current],L=["A","B","C","D"];answered=false;document.getElementById("qCount").textContent=`Q ${current+1} / ${shuffled.length}`;document.getElementById("qPts").textContent=`⚡ ${(userData&&userData.score)||0}`;document.getElementById("qProg").style.width=(current/shuffled.length*100)+"%";document.getElementById("question").textContent=q.q;document.getElementById("feedback").className="feedback";document.getElementById("btnNext").classList.remove("show");document.getElementById("options").innerHTML=q.opts.map((o,i)=>`<button class="opt-btn" id="opt${i}" onclick="answerQ(${i})"><div class="opt-letter">${L[i]}</div>${o}</button>`).join("");}
 
-/* LIVE POINT UPDATE */
-window.answer=async(ans)=>{
+window.answerQ=async(idx)=>{if(answered)return;answered=true;const q=shuffled[current],chosen=q.opts[idx],isOk=chosen===q.ans,fb=document.getElementById("feedback");q.opts.forEach((_,i)=>{const b=document.getElementById("opt"+i);if(b)b.disabled=true;});q.opts.forEach((o,i)=>{const b=document.getElementById("opt"+i);if(!b)return;if(o===q.ans)b.classList.add("correct");else if(i===idx)b.classList.add("wrong");});if(isOk){fb.textContent="✅ CORRECT! +25 POINTS";fb.className="feedback correct";sessionPts+=25;await addScore(25);}else{fb.textContent="❌ WRONG! Answer: "+q.ans;fb.className="feedback wrong";}const nb=document.getElementById("btnNext");nb.textContent=current===shuffled.length-1?"SEE RESULTS":"NEXT →";nb.classList.add("show");};
 
- if(ans===questions[current].answer){
+window.nextQ=()=>{current++;renderQ();};
 
-   let refUser=ref(db,"users/"+user.uid);
-   let snap=await get(refUser);
-   let old=snap.val().score||0;
+function quizDone(){document.getElementById("game").innerHTML=`<div style="text-align:center;padding:20px 0;"><div style="font-family:'Orbitron',monospace;font-size:20px;font-weight:900;color:var(--accent);margin-bottom:12px;">🎉 QUIZ COMPLETE!</div><div style="font-family:'Orbitron',monospace;font-size:48px;font-weight:900;color:var(--gold);text-shadow:0 0 28px rgba(255,214,0,0.4);margin:12px 0;">+${sessionPts}</div><p style="color:var(--muted);margin-bottom:8px;">Points earned this round</p><p style="font-family:'Orbitron',monospace;font-size:13px;color:var(--accent);margin-bottom:24px;">TOTAL: ${(userData&&userData.score)||0} PTS</p><button class="btn btn-primary" onclick="goHome()" style="max-width:280px;margin:0 auto 10px;">BACK TO HOME</button><button class="btn btn-outline" onclick="startQuiz()" style="max-width:280px;margin:0 auto;">PLAY AGAIN</button></div>`;}
 
-   let newScore=old+25;
+async function addScore(pts){if(!user||pts<=0)return;await runTransaction(ref(db,"users/"+user.uid+"/score"),cur=>(cur||0)+pts);const snap=await get(ref(db,"users/"+user.uid+"/score"));if(snap.exists())await update(ref(db,"leaderboard/"+user.uid),{username:userData.username,score:snap.val()});}
 
-   await update(refUser,{score:newScore});
+onValue(ref(db,"leaderboard"),snap=>{const rows=[];snap.forEach(c=>rows.push({uid:c.key,...c.val()}));rows.sort((a,b)=>b.score-a.score);if(user){const idx=rows.findIndex(r=>r.uid===user.uid);document.getElementById("pRank").textContent=idx>=0?"#"+(idx+1):"#—";}const medals=["🥇","🥈","🥉"];document.getElementById("leaderboard").innerHTML=rows.length?rows.map((r,i)=>`<div class="lb-row"><div class="lb-rank">${i<3?medals[i]:i+1}</div><div class="lb-name" style="${user&&r.uid===user.uid?"color:var(--accent)":""}">${r.username}${user&&r.uid===user.uid?" ★":""}</div><div class="lb-score">${r.score}</div></div>`).join(""):`<p style="color:var(--muted);text-align:center;padding:20px;">No scores yet. Be the first!</p>`;});
 
-   await set(ref(db,"leaderboard/"+user.uid),{
-     username:snap.val().username,
-     score:newScore
-   });
+setInterval(()=>{const now=Math.floor(Date.now()/1000),r=300-(now%300),m=Math.floor(r/60),s=r%60,el=document.getElementById("timerDisplay");if(!el)return;el.textContent=`${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;el.className=r<=30?"urgent":"";const bar=document.getElementById("timerBar");if(bar)bar.style.width=(r/300*100)+"%";},1000);
 
-   pScore.innerText="Score: "+newScore;
-   points+=25;
- }
-
- current++;
-
- if(current<questions.length){
-  showQuestion();
- } else {
-  show("home");
- }
-
- score.innerText="Points: "+points;
-};
-
-/* LEADERBOARD */
-onValue(ref(db,"leaderboard"), snap=>{
- let html="";
- snap.forEach(c=>{
-  let d=c.val();
-  html+=`<li>${d.username} - ${d.score}</li>`;
- });
- leaderboard.innerHTML=html;
-});
-
-/* TIMER */
-setInterval(()=>{
- let now=Math.floor(Date.now()/1000);
- let r=300-(now%300);
- timer.innerText="Refresh in "+Math.floor(r/60)+":"+String(r%60).padStart(2,"0");
-},1000);
-
-/* UI */
-window.toggleMenu=()=>menuBox.classList.toggle("hidden");
-window.openProfile=()=>profilePage.style.display="block";
-window.closeProfile=()=>profilePage.style.display="none";
-window.goHome=()=>profilePage.style.display="none";
-
+window.openProfile=()=>{closeSidebar();if(userData){document.getElementById("pUsername").textContent=userData.username||"—";document.getElementById("pEmail").textContent=userData.email||user?.email||"—";document.getElementById("pScore").textContent=userData.score||0;}document.getElementById("profilePage").classList.add("open");};
+window.closeProfile=()=>document.getElementById("profilePage").classList.remove("open");
+window.goHome=()=>{closeSidebar();closeProfile();show("home");};
+window.goLeaderboard=()=>{closeSidebar();show("home");setTimeout(()=>document.getElementById("lbSection").scrollIntoView({behavior:"smooth"}),120);};
+window.toggleMenu=()=>{document.getElementById("menuBox").classList.toggle("open");document.getElementById("menuOverlay").classList.toggle("open");};
+function closeSidebar(){document.getElementById("menuBox").classList.remove("open");document.getElementById("menuOverlay").classList.remove("open");}
+window.switchTab=(tab)=>{document.getElementById("loginForm").className=tab==="login"?"active":"";document.getElementById("signupForm").className=tab==="signup"?"active":"";document.getElementById("tabLogin").className="auth-tab"+(tab==="login"?" active":"");document.getElementById("tabSignup").className="auth-tab"+(tab==="signup"?" active":"");};
+function showAlert(el,msg){el.textContent=msg;el.classList.add("show");}
+function toast(msg,type){const t=document.getElementById("toast");t.textContent=msg;t.className="show "+type;setTimeout(()=>t.className="",3000);}
+function friendlyErr(code){const m={"auth/user-not-found":"No account with this email.","auth/wrong-password":"Incorrect password.","auth/invalid-credential":"Invalid email or password.","auth/email-already-in-use":"Email already registered.","auth/invalid-email":"Invalid email address.","auth/weak-password":"Password must be at least 6 characters.","auth/network-request-failed":"Network error. Check your connection.","auth/too-many-requests":"Too many attempts. Try again later."};return m[code]||"Something went wrong. Please try again.";}
 </script>
-
 </body>
-  </html>
+</html>
