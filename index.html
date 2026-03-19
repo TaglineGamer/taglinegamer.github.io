@@ -16,11 +16,6 @@
       background: #020617;
       font-size: 22px;
       color: #22c55e;
-      font-weight: bold;
-    }
-
-    .container {
-      padding: 20px;
     }
 
     .card {
@@ -29,7 +24,14 @@
       border-radius: 15px;
       margin: 20px auto;
       max-width: 400px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.6);
+    }
+
+    input {
+      padding: 10px;
+      width: 80%;
+      border-radius: 10px;
+      border: none;
+      margin: 10px;
     }
 
     button {
@@ -41,27 +43,10 @@
       background: #22c55e;
       color: white;
       font-size: 16px;
-      transition: 0.2s;
     }
 
-    button:hover {
-      background: #16a34a;
-    }
-
-    .score {
-      font-size: 20px;
-      margin-top: 10px;
-    }
-
-    .redeem {
-      background: #334155;
-      padding: 15px;
-      border-radius: 10px;
-      margin-top: 15px;
-    }
-
-    .restart {
-      background: #f59e0b;
+    .hidden {
+      display: none;
     }
   </style>
 </head>
@@ -70,41 +55,49 @@
 
 <div class="header">🎮 Intier Gaming</div>
 
-<div class="container">
+<!-- LOGIN -->
+<div class="card" id="login">
+  <h2>Enter Your Name</h2>
+  <input type="text" id="playerName" placeholder="Your name">
+  <button onclick="startGame()">Start Game</button>
+</div>
 
-  <div class="card">
-    <h2 id="question">Click Start to Play</h2>
-    <div id="options"></div>
-    <button onclick="startQuiz()">▶ Start Quiz</button>
-    <button class="restart" onclick="startQuiz()">🔄 Restart</button>
-    <div class="score" id="score">Points: 0</div>
-  </div>
-
-  <div class="card redeem">
-    <h3>💰 Redeem Rewards</h3>
-    <p>1000 Points = ₹10</p>
-    <p>3000 Points = ₹30</p>
-    <p>10000 Points = ₹100</p>
-    <p>🚧 Coming Soon</p>
-  </div>
-
+<!-- GAME -->
+<div class="card hidden" id="game">
+  <h2 id="welcome"></h2>
+  <h3 id="question"></h3>
+  <div id="options"></div>
+  <p id="score">Points: 0</p>
 </div>
 
 <script>
 
+let player = "";
+let points = 0;
+let current = 0;
+
 let questions = [
-  {q:"What is 2+2?", options:["3","4","5"], answer:"4"},
-  {q:"Capital of India?", options:["Delhi","Mumbai","Kolkata"], answer:"Delhi"},
-  {q:"5 x 3 = ?", options:["15","10","20"], answer:"15"},
-  {q:"Sun rises from?", options:["East","West","North"], answer:"East"}
+  {q:"2+2?", options:["3","4","5"], answer:"4"},
+  {q:"Capital of India?", options:["Delhi","Mumbai","Goa"], answer:"Delhi"},
+  {q:"3x3?", options:["6","9","12"], answer:"9"}
 ];
 
-let current = 0;
-let points = 0;
+function startGame(){
+  player = document.getElementById("playerName").value;
 
-function startQuiz(){
-  current = 0;
+  if(player === ""){
+    alert("Enter your name!");
+    return;
+  }
+
+  document.getElementById("login").classList.add("hidden");
+  document.getElementById("game").classList.remove("hidden");
+
+  document.getElementById("welcome").innerText = "Welcome " + player;
+
   points = 0;
+  current = 0;
+
   showQuestion();
 }
 
@@ -114,7 +107,7 @@ function showQuestion(){
 
   let html = "";
   q.options.forEach(opt=>{
-    html += `<button onclick="checkAnswer('${opt}')">${opt}</button><br>`;
+    html += `<button onclick="checkAnswer('${opt}')">${opt}</button>`;
   });
 
   document.getElementById("options").innerHTML = html;
@@ -130,7 +123,7 @@ function checkAnswer(ans){
   if(current < questions.length){
     showQuestion();
   } else {
-    document.getElementById("question").innerText = "🎉 Quiz Finished!";
+    document.getElementById("question").innerText = "🎉 Finished!";
     document.getElementById("options").innerHTML = "";
   }
 
