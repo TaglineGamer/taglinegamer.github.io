@@ -300,6 +300,53 @@
   </div>
 </div>
 
+  <div class="payout-page" id="payoutPage">
+  <div class="payout-inner">
+    <div class="payout-hero">
+      <h2>🎁 PAYOUT</h2>
+      <p>Redeem your points for real rewards</p>
+    </div>
+    <div class="payout-score-box">
+      <span id="payoutScore">0</span>
+      <p>YOUR CURRENT POINTS</p>
+    </div>
+    <div class="platform-tabs">
+      <div class="platform-tab active" id="tabGPlay" onclick="switchPlatform('gplay')">🎮 Google Play</div>
+      <div class="platform-tab" id="tabAmazon" onclick="switchPlatform('amazon')">📦 Amazon</div>
+    </div>
+    <div id="payoutCards"></div>
+    <div style="background:rgba(255,214,0,0.06);border:1px solid rgba(255,214,0,0.2);border-radius:12px;padding:14px;margin-top:4px;">
+      <p style="font-size:12px;color:var(--gold);font-weight:700;letter-spacing:1px;margin-bottom:4px;">⚠️ IMPORTANT</p>
+      <p style="font-size:12px;color:var(--muted);line-height:1.6;">Payouts are processed manually within 24–48 hours. Points will be deducted immediately when you submit a request.</p>
+    </div>
+    <button class="btn btn-outline" onclick="closePayout()" style="margin-top:16px;">CLOSE</button>
+  </div>
+</div>
+
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <h3>⚡ CONFIRM REDEMPTION</h3>
+    <p id="confirmText">Are you sure?</p>
+    <p class="warn">⚠️ Points will be deducted immediately and cannot be reversed.</p>
+    <div class="confirm-btns">
+      <button class="confirm-no" onclick="closeConfirm()">CANCEL</button>
+      <button class="confirm-yes" id="confirmYesBtn">CONFIRM</button>
+    </div>
+  </div>
+</div>
+
+<div class="admin-page" id="adminPage">
+  <div class="admin-inner">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+      <div style="font-family:'Orbitron',monospace;font-size:18px;font-weight:900;color:var(--gold);">⚙️ ADMIN PANEL</div>
+      <button class="iconBtn" onclick="closeAdmin()">✕</button>
+    </div>
+    <div style="font-family:'Orbitron',monospace;font-size:12px;color:var(--muted);letter-spacing:2px;margin-bottom:16px;">ONGOING PAYOUT REQUESTS</div>
+    <div id="adminPayoutList">
+      <p style="color:var(--muted);text-align:center;padding:30px;">Loading...</p>
+    </div>
+  </div>
+</div>
 <div id="toast"></div>
 
 
