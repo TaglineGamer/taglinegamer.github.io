@@ -814,6 +814,53 @@ function loadAdminPayouts(){
 }
 
 window.approveRequest=async(reqId)=>{
+  window.giftCoins=async()=>{
+  const uname=document.getElementById("giftUsername").value.trim();
+  const amount=parseInt(document.getElementById("giftAmount").value);
+  const res=document.getElementById("giftResult");
+  res.className="gift-result";
+  if(!uname.startsWith("@")||uname.length<2){res.textContent="❌ Username must start with @";res.className="gift-result bad";return;}
+  if(!amount||amount<1||amount>9999){res.textContent="❌ Amount must be between 1 and 9999";res.className="gift-result bad";return;}
+  const unameSnap=await get(ref(db,"usernames/"+uname));
+  if(!unameSnap.exists()){res.textContent="❌ Username not found. Check spelling.";res.className="gift-result bad";return;}
+  const targetUid=unameSnap.val();
+  await runTransaction(ref(db,"users/"+targetUid+"/score"),cur=>(cur||0)+amount);
+  const newSnap=await get(ref(db,"users/"+targetUid+"/score"));
+  const newScore=newSnap.exists()?newSnap.val():0;
+  await update(ref(db,"leaderboard/"+targetUid),{score:newScore});
+  const logId="gift_"+Date.now();
+  await set(ref(db,"giftlog/"+logId),{
+    toUsername:uname,
+    toUid:targetUid,
+    amount:amount,
+    byUid:user.uid,
+    newScore:newScore,
+    timestamp:Date.now()
+  });
+  res.textContent="✅ "+amount+" coins gifted to "+uname+"! Their new score: "+newScore;
+  res.className="gift-result ok";
+  document.getElementById("giftUsername").value="";
+  document.getElementById("giftAmount").value="";
+  loadGiftLog();
+};
+
+function loadGiftLog(){
+  onValue(ref(db,"giftlog"),snap=>{
+    const list=[];
+    snap.forEach(c=>list.push({id:c.key,...c.val()}));
+    list.sort((a,b)=>b.timestamp-a.timestamp);
+    const el=document.getElementById("giftLogList");
+    if(!el)return;
+    if(!list.length){el.innerHTML=`<p style="color:var(--muted);font-size:13px;margin-bottom:16px;">No gifts sent yet.</p>`;return;}
+    el.innerHTML=list.slice(0,10).map(g=>{
+      const date=new Date(g.timestamp).toLocaleDateString("en-IN",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"});
+      return `<div class="gift-log-item">
+        <h5>⚡ +${g.amount} coins → ${g.toUsername}</h5>
+        <p>New total: ${g.newScore} pts &nbsp;|&nbsp; ${date}</p>
+      </div>`;
+    }).join("");
+  });
+    }
   await update(ref(db,"payouts/"+reqId),{status:"approved"});
   toast("Request approved ✅","ok");
 };
