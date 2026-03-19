@@ -59,7 +59,7 @@ input{
 
 <body>
 
-<!-- TOP -->
+<!-- TOP BAR -->
 <div class="topbar">
   <div class="menu" onclick="toggleMenu()">☰</div>
   <div>🎮 Intier Gaming</div>
@@ -151,7 +151,7 @@ onAuthStateChanged(auth,async(u)=>{
  else show("login");
 });
 
-// USERNAME CHECK
+// CHECK USERNAME
 async function checkUsername(){
  const snap=await get(ref(db,"users/"+user.uid));
  if(snap.exists()){
@@ -160,38 +160,51 @@ async function checkUsername(){
  } else show("usernameCard");
 }
 
-// AUTH FUNCTIONS
+// AUTH
 window.signup=async()=>{
- try{await createUserWithEmailAndPassword(auth,email.value,password.value);}
- catch(e){alert(e.message);}
-}
+ try{
+  await createUserWithEmailAndPassword(auth,email.value,password.value);
+ }catch(e){alert(e.message);}
+};
 
 window.login=async()=>{
- try{await signInWithEmailAndPassword(auth,email.value,password.value);}
- catch(e){alert(e.message);}
-}
+ try{
+  await signInWithEmailAndPassword(auth,email.value,password.value);
+ }catch(e){alert(e.message);}
+};
 
 window.logout=()=>signOut(auth);
 
-// USERNAME
+// FIXED USERNAME FUNCTION
 window.saveUsername=async()=>{
- let uname=username.value.trim();
- if(!uname.startsWith("@")) uname="@"+uname;
- if(uname.includes(" ")) return alert("No spaces allowed");
- if(!/^@[a-zA-Z0-9_]+$/.test(uname)) return alert("Invalid username");
+ try{
+  let uname=username.value.trim();
 
- const check=await get(ref(db,"usernames/"+uname));
- if(check.exists()) return alert("Taken");
+  if(!uname.startsWith("@")) uname="@"+uname;
 
- await set(ref(db,"users/"+user.uid),{
-  username:uname,
-  email:user.email,
-  score:0
- });
+  if(uname.includes(" ")) return alert("No spaces allowed");
+  if(!/^@[a-zA-Z0-9_]+$/.test(uname)) return alert("Invalid username");
 
- await set(ref(db,"usernames/"+uname),user.uid);
- checkUsername();
-}
+  const check=await get(ref(db,"usernames/"+uname));
+  if(check.exists()) return alert("Username already taken");
+
+  await set(ref(db,"users/"+user.uid),{
+    username:uname,
+    email:user.email,
+    score:0
+  });
+
+  await set(ref(db,"usernames/"+uname),user.uid);
+
+  alert("Username saved ✅");
+
+  checkUsername();
+
+ }catch(e){
+  console.error(e);
+  alert("Error: "+e.message);
+ }
+};
 
 // PROFILE
 window.openProfile=async()=>{
@@ -201,7 +214,7 @@ window.openProfile=async()=>{
  pUsername.innerText="Username: "+d.username;
  pScore.innerText="Points: "+d.score;
  show("profile");
-}
+};
 
 window.goHome=()=>show("home");
 
@@ -216,7 +229,7 @@ window.startQuiz=()=>{
  points=0;current=0;
  show("game");
  showQuestion();
-}
+};
 
 function showQuestion(){
  let q=questions[current];
@@ -235,12 +248,11 @@ window.checkAnswer=async(ans)=>{
 
   const snap=await get(ref(db,"users/"+user.uid));
   const d=snap.val();
+
   let newScore=(d.score||0)+points;
 
-  // UPDATE USER SCORE
   await update(ref(db,"users/"+user.uid),{score:newScore});
 
-  // ANTI-CHEAT LEADERBOARD
   await set(ref(db,"leaderScores/"+user.uid),{
     username:d.username,
     score:newScore
@@ -248,7 +260,7 @@ window.checkAnswer=async(ans)=>{
  }
 
  score.innerText="Points: "+points;
-}
+};
 
 // LEADERBOARD
 function loadLeaderboard(){
@@ -273,4 +285,4 @@ setInterval(()=>{
 
 </script>
 </body>
-  </html>
+</html>
