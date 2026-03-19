@@ -208,8 +208,13 @@ function loadLeaderboard(){
     appId: "1:90246031418:web:72ca63ea6b6c8f0bf46d03"
   };
 
+import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
+
+
+  
   // Initialize Firebase
   const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
 </script>
   
 </body>
