@@ -12,7 +12,6 @@ body {
   color: white;
   text-align: center;
 }
-
 .header {
   padding: 15px;
   background: #020617;
@@ -20,14 +19,8 @@ body {
   color: #22c55e;
   display: flex;
   justify-content: space-between;
-  align-items: center;
 }
-
-.menu, .profileBtn {
-  font-size: 22px;
-  cursor: pointer;
-}
-
+.menu, .profileBtn { cursor: pointer; }
 .card {
   background: #1e293b;
   padding: 20px;
@@ -35,7 +28,6 @@ body {
   margin: 20px auto;
   max-width: 400px;
 }
-
 button {
   width: 80%;
   padding: 12px;
@@ -45,7 +37,6 @@ button {
   background: #22c55e;
   color: white;
 }
-
 input {
   padding: 10px;
   width: 80%;
@@ -53,9 +44,7 @@ input {
   border: none;
   margin: 10px;
 }
-
 .hidden { display: none; }
-
 .menuBox {
   position: absolute;
   top: 60px;
@@ -64,15 +53,14 @@ input {
   padding: 10px;
   border-radius: 10px;
 }
-
 .profilePage {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: #020617;
-  display: none;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:#020617;
+  display:none;
 }
 </style>
 </head>
@@ -102,7 +90,7 @@ input {
 <!-- USERNAME -->
 <div class="card hidden" id="usernameBox">
   <h2>Create Username</h2>
-  <input id="usernameInput" placeholder="@username">
+  <input id="usernameInput" placeholder="username">
   <button onclick="saveUsername()">Save Username</button>
 </div>
 
@@ -143,35 +131,33 @@ import { getDatabase, ref, set, get, update, onValue } from "https://www.gstatic
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
+  apiKey: "AIzaSyDgjlWP9Ovp8lI-aS5ypaLUfb1by0ttejY",
   authDomain: "intier-gaming.firebaseapp.com",
   databaseURL: "https://intier-gaming-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "intier-gaming",
+  projectId: "intier-gaming"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth();
 
-let user = null;
-let points = 0;
-let current = 0;
+let user, points=0, current=0;
 
 const questions = [
   {q:"2+2?", options:["3","4","5"], answer:"4"},
   {q:"Capital of India?", options:["Delhi","Mumbai"], answer:"Delhi"}
 ];
 
-onAuthStateChanged(auth, async (u) => {
+onAuthStateChanged(auth, async(u)=>{
   if(u){
-    user = u;
-    document.getElementById("login").classList.add("hidden");
+    user=u;
+    login.classList.add("hidden");
 
     let snap = await get(ref(db,"users/"+user.uid));
     let data = snap.val();
 
     if(!data?.username){
-      document.getElementById("usernameBox").classList.remove("hidden");
+      usernameBox.classList.remove("hidden");
     } else {
       startMain(data);
     }
@@ -179,30 +165,25 @@ onAuthStateChanged(auth, async (u) => {
 });
 
 function startMain(data){
-  document.getElementById("usernameBox").classList.add("hidden");
-  document.getElementById("main").classList.remove("hidden");
+  usernameBox.classList.add("hidden");
+  main.classList.remove("hidden");
 
-  document.getElementById("welcome").innerText = "Welcome " + data.username;
-  document.getElementById("pEmail").innerText = user.email;
-  document.getElementById("pUsername").innerText = data.username;
-  document.getElementById("pScore").innerText = "Score: " + (data.score||0);
+  welcome.innerText="Welcome "+data.username;
+  pEmail.innerText=user.email;
+  pUsername.innerText=data.username;
+  pScore.innerText="Score: "+(data.score||0);
 }
 
-window.signup = async ()=>{
-  await createUserWithEmailAndPassword(auth,email.value,password.value);
-};
+window.signup=()=>createUserWithEmailAndPassword(auth,email.value,password.value);
+window.login=()=>signInWithEmailAndPassword(auth,email.value,password.value);
 
-window.login = async ()=>{
-  await signInWithEmailAndPassword(auth,email.value,password.value);
-};
-
-window.saveUsername = async ()=>{
-  let uname = usernameInput.value.trim();
-
+window.saveUsername=async()=>{
+  let uname=usernameInput.value.trim();
   if(uname.includes(" ")) return alert("No spaces allowed");
-  uname = "@" + uname;
 
-  let check = await get(ref(db,"usernames/"+uname));
+  uname="@"+uname;
+
+  let check=await get(ref(db,"usernames/"+uname));
   if(check.exists()) return alert("Username taken");
 
   await set(ref(db,"users/"+user.uid),{
@@ -216,29 +197,26 @@ window.saveUsername = async ()=>{
   startMain({username:uname,score:0});
 };
 
-window.startQuiz = ()=>{
-  points = 0;
-  current = 0;
+window.startQuiz=()=>{
+  points=0; current=0;
   main.classList.add("hidden");
   game.classList.remove("hidden");
   showQuestion();
 };
 
 function showQuestion(){
-  let q = questions[current];
-  question.innerText = q.q;
+  let q=questions[current];
+  question.innerText=q.q;
 
   let html="";
   q.options.forEach(o=>{
-    html += `<button onclick="answer('${o}')">${o}</button>`;
+    html+=`<button onclick="answer('${o}')">${o}</button>`;
   });
-
-  options.innerHTML = html;
+  options.innerHTML=html;
 }
 
-window.answer = async(ans)=>{
+window.answer=async(ans)=>{
   if(ans===questions[current].answer) points+=25;
-
   current++;
 
   if(current<questions.length){
@@ -247,13 +225,12 @@ window.answer = async(ans)=>{
     game.classList.add("hidden");
     main.classList.remove("hidden");
 
-    let userRef = ref(db,"users/"+user.uid);
-    let snap = await get(userRef);
-    let old = snap.val().score || 0;
+    let refUser=ref(db,"users/"+user.uid);
+    let snap=await get(refUser);
+    let old=snap.val().score||0;
 
-    if(points > old){ // anti cheat
-      await update(userRef,{score:points});
-
+    if(points>old){
+      await update(refUser,{score:points});
       await set(ref(db,"leaderboard/"+user.uid),{
         username:snap.val().username,
         score:points
@@ -263,33 +240,31 @@ window.answer = async(ans)=>{
     loadLeaderboard();
   }
 
-  score.innerText = "Points: "+points;
+  score.innerText="Points: "+points;
 };
 
 function loadLeaderboard(){
   onValue(ref(db,"leaderboard"), snap=>{
     let html="";
     snap.forEach(child=>{
-      let d = child.val();
-      html += `<li>${d.username} - ${d.score}</li>`;
+      let d=child.val();
+      html+=`<li>${d.username} - ${d.score}</li>`;
     });
-    leaderboard.innerHTML = html;
+    leaderboard.innerHTML=html;
   });
 }
 
 /* GLOBAL TIMER */
 setInterval(()=>{
-  let now = Math.floor(Date.now()/1000);
-  let remaining = 300 - (now % 300);
+  let now=Math.floor(Date.now()/1000);
+  let remaining=300-(now%300);
 
-  if(remaining === 300){
-    loadLeaderboard();
-  }
+  if(remaining===300) loadLeaderboard();
 
-  let m = Math.floor(remaining/60);
-  let s = remaining%60;
+  let m=Math.floor(remaining/60);
+  let s=remaining%60;
 
-  timer.innerText = "Refresh in "+m+":"+String(s).padStart(2,"0");
+  timer.innerText="Refresh in "+m+":"+String(s).padStart(2,"0");
 },1000);
 
 /* UI */
