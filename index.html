@@ -2,6 +2,7 @@
 <html>
 <head>
   <title>Intier Gaming</title>
+
   <style>
     body {
       margin: 0;
@@ -77,12 +78,28 @@
 
 <!-- LEADERBOARD -->
 <div class="card">
-  <h3>🏆 Leaderboard (Your Device)</h3>
+  <h3>🏆 Global Leaderboard</h3>
   <ul id="leaderboard"></ul>
 </div>
 
-<script>
+<script type="module">
 
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDgjlWP9Ovp8lI-aS5ypaLUfb1by0ttejY",
+  authDomain: "intier-gaming.firebaseapp.com",
+  projectId: "intier-gaming",
+  storageBucket: "intier-gaming.firebasestorage.app",
+  messagingSenderId: "90246031418",
+  appId: "1:90246031418:web:72ca63ea6b6c8f0bf46d03"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// ---------------- VARIABLES ----------------
 let player = "";
 let points = 0;
 let current = 0;
@@ -93,7 +110,7 @@ let questions = [
   {q:"3x3?", options:["6","9","12"], answer:"9"}
 ];
 
-// Load saved user
+// ---------------- LOAD ----------------
 window.onload = function(){
   loadLeaderboard();
 
@@ -103,14 +120,15 @@ window.onload = function(){
     player = savedName;
     document.getElementById("login").classList.add("hidden");
     document.getElementById("startScreen").classList.remove("hidden");
-    document.getElementById("welcome").innerText = "Welcome back " + player;
+    document.getElementById("welcome").innerText = "Welcome " + player;
   }
-};
+}
 
+// ---------------- NAME ----------------
 function saveName(){
   player = document.getElementById("playerName").value;
 
-  if(player === ""){
+  if(player == ""){
     alert("Enter your name!");
     return;
   }
@@ -119,10 +137,10 @@ function saveName(){
 
   document.getElementById("login").classList.add("hidden");
   document.getElementById("startScreen").classList.remove("hidden");
-
   document.getElementById("welcome").innerText = "Welcome " + player;
 }
 
+// ---------------- QUIZ ----------------
 function startQuiz(){
   points = 0;
   current = 0;
@@ -135,6 +153,7 @@ function startQuiz(){
 
 function showQuestion(){
   let q = questions[current];
+
   document.getElementById("question").innerText = q.q;
 
   let html = "";
@@ -159,13 +178,12 @@ function checkAnswer(ans){
     document.getElementById("options").innerHTML = "";
 
     saveScore();
-    loadLeaderboard();
   }
 
   document.getElementById("score").innerText = "Points: " + points;
 }
 
-// Save leaderboard
+// ---------------- FIREBASE ----------------
 function saveScore(){
   const scoreRef = ref(db, "leaderboard");
 
@@ -175,7 +193,6 @@ function saveScore(){
   });
 }
 
-// Load leaderboard
 function loadLeaderboard(){
   const scoreRef = ref(db, "leaderboard");
 
@@ -193,30 +210,5 @@ function loadLeaderboard(){
 
 </script>
 
-<script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-
-  // Your web app's Firebase configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyDgjlWP9Ovp8lI-aS5ypaLUfb1by0ttejY",
-    authDomain: "intier-gaming.firebaseapp.com",
-    projectId: "intier-gaming",
-    storageBucket: "intier-gaming.firebasestorage.app",
-    messagingSenderId: "90246031418",
-    appId: "1:90246031418:web:72ca63ea6b6c8f0bf46d03"
-  };
-
-import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
-
-
-  
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
-</script>
-  
 </body>
 </html>
