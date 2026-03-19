@@ -12,6 +12,14 @@ body {
   color:white;
   text-align:center;
 }
+.header {
+  padding:15px;
+  background:#020617;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.menu,.profileBtn{cursor:pointer;font-size:20px;}
 .card {
   background:#1e293b;
   padding:20px;
@@ -35,13 +43,39 @@ input {
   border:none;
   margin:10px;
 }
-.hidden { display:none; }
+.hidden {display:none;}
+.menuBox {
+  position:absolute;
+  top:60px;
+  left:10px;
+  background:#1e293b;
+  padding:10px;
+  border-radius:10px;
+}
+.profilePage {
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:#020617;
+  display:none;
+}
 </style>
 </head>
 
 <body>
 
-<h2>🎮 Intier Gaming</h2>
+<div class="header">
+  <span class="menu" onclick="toggleMenu()">☰</span>
+  🎮 Intier Gaming
+  <span class="profileBtn" onclick="openProfile()">👤</span>
+</div>
+
+<div id="menuBox" class="menuBox hidden">
+  <p onclick="goHome()">Home</p>
+  <p onclick="openProfile()">Profile</p>
+</div>
 
 <!-- LOGIN -->
 <div class="card" id="login">
@@ -73,11 +107,27 @@ input {
   <p id="score"></p>
 </div>
 
+<!-- LEADERBOARD -->
+<div class="card">
+  <h3>🏆 Leaderboard</h3>
+  <ul id="leaderboard"></ul>
+</div>
+
+<!-- PROFILE -->
+<div id="profilePage" class="profilePage">
+  <h2>Profile</h2>
+  <p id="pEmail"></p>
+  <p id="pUsername"></p>
+  <p id="pScore"></p>
+  <button onclick="logout()">Logout</button>
+  <button onclick="closeProfile()">Close</button>
+</div>
+
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getDatabase, ref, set, get, update } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+import { getDatabase, ref, set, get, update, onValue } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDgjlWP9Ovp8lI-aS5ypaLUfb1by0ttejY",
@@ -90,136 +140,132 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
 
-let user, points=0, current=0;
+let user=null, points=0, current=0;
 
-// UI SWITCH
+/* UI SWITCH */
 function show(id){
-  ["login","usernameBox","home","game"].forEach(i=>{
-    document.getElementById(i).classList.add("hidden");
-  });
-  document.getElementById(id).classList.remove("hidden");
+ ["login","usernameBox","home","game"].forEach(i=>{
+  document.getElementById(i).classList.add("hidden");
+ });
+ document.getElementById(id).classList.remove("hidden");
 }
 
-// AUTH STATE
+/* AUTH */
 onAuthStateChanged(auth, async(u)=>{
-  if(u){
-    user=u;
-
-    let snap = await get(ref(db,"users/"+user.uid));
-    if(snap.exists()){
-      document.getElementById("welcome").innerText="Welcome "+snap.val().username;
-      show("home");
-    } else {
-      show("usernameBox");
-    }
-  } else {
-    show("login");
-  }
+ if(u){
+  user=u;
+  let snap=await get(ref(db,"users/"+user.uid));
+  if(snap.exists()){
+    let d=snap.val();
+    welcome.innerText="Welcome "+d.username;
+    pEmail.innerText=user.email;
+    pUsername.innerText=d.username;
+    pScore.innerText="Score: "+(d.score||0);
+    show("home");
+  } else show("usernameBox");
+ } else show("login");
 });
 
-// SIGNUP
-window.signup = async ()=>{
-  try{
-    await createUserWithEmailAndPassword(auth,email.value,password.value);
-    alert("Signup success");
-  }catch(e){
-    alert(e.message);
-  }
+window.signup=async()=>{
+ try{
+  await createUserWithEmailAndPassword(auth,email.value,password.value);
+  alert("Signup successful");
+ }catch(e){alert(e.message);}
 };
 
-// LOGIN
-window.loginUser = async ()=>{
-  try{
-    await signInWithEmailAndPassword(auth,email.value,password.value);
-    alert("Login success");
-  }catch(e){
-    alert(e.message);
-  }
+window.loginUser=async()=>{
+ try{
+  await signInWithEmailAndPassword(auth,email.value,password.value);
+  alert("Login successful");
+ }catch(e){alert(e.message);}
 };
 
-// USERNAME
-window.saveUsername = async ()=>{
-  let uname = usernameInput.value.trim();
+window.logout=()=>signOut(auth);
 
-  if(uname.includes(" ")) return alert("No spaces");
-  uname = "@"+uname;
+/* USERNAME */
+window.saveUsername=async()=>{
+ let uname=usernameInput.value.trim();
+ if(uname.includes(" ")) return alert("No spaces allowed");
+ uname="@"+uname;
 
-  await set(ref(db,"users/"+user.uid),{
-    username: uname,
-    score: 0
-  });
+ await set(ref(db,"users/"+user.uid),{
+  username:uname,
+  score:0
+ });
 
-  show("home");
+ show("home");
 };
 
-// QUESTIONS (50)
-let questions = [
-{q:"2+2?",options:["3","4","5"],answer:"4"},
-{q:"5+5?",options:["10","11","12"],answer:"10"},
-{q:"10-2?",options:["6","8","9"],answer:"8"},
-{q:"7+3?",options:["10","11","9"],answer:"10"},
-{q:"3+4?",options:["7","8","6"],answer:"7"},
-{q:"6+2?",options:["8","7","9"],answer:"8"},
-{q:"4+4?",options:["8","6","7"],answer:"8"},
-{q:"9-3?",options:["6","5","7"],answer:"6"},
-{q:"8-2?",options:["6","5","7"],answer:"6"},
-{q:"2*3?",options:["6","5","7"],answer:"6"},
-{q:"3*3?",options:["9","8","7"],answer:"9"},
-{q:"4*2?",options:["8","7","9"],answer:"8"},
-{q:"10/2?",options:["5","4","6"],answer:"5"},
-{q:"12/3?",options:["4","5","6"],answer:"4"},
-{q:"5*2?",options:["10","8","9"],answer:"10"},
-{q:"6*2?",options:["12","11","10"],answer:"12"},
-{q:"7*1?",options:["7","6","8"],answer:"7"},
-{q:"9+1?",options:["10","11","9"],answer:"10"},
-{q:"8+2?",options:["10","9","11"],answer:"10"},
-{q:"7+2?",options:["9","10","8"],answer:"9"},
-{q:"HTML stands for?",options:["Hyper Text Markup Language","High Text","None"],answer:"Hyper Text Markup Language"},
-{q:"CSS used for?",options:["Styling","Database","Logic"],answer:"Styling"},
-{q:"JS stands for?",options:["JavaScript","JavaStyle","None"],answer:"JavaScript"}
-];
+/* QUESTIONS (50 AUTO GENERATED) */
+let questions = Array.from({length:50},(_,i)=>({
+  q:`Question ${i+1}: ${i+1}+1?`,
+  options:[`${i+2}`,`${i+3}`,`${i}`],
+  answer:`${i+2}`
+}));
 
-// START QUIZ
-window.startQuiz = ()=>{
-  questions.sort(()=>Math.random()-0.5);
-  points=0;
-  current=0;
-  show("game");
-  showQuestion();
+/* START QUIZ */
+window.startQuiz=()=>{
+ questions.sort(()=>Math.random()-0.5);
+ points=0;
+ current=0;
+ show("game");
+ showQuestion();
 };
 
 function showQuestion(){
-  let q=questions[current];
-  question.innerText=q.q;
-
-  let html="";
-  q.options.forEach(o=>{
-    html+=`<button onclick="answer('${o}')">${o}</button>`;
-  });
-
-  options.innerHTML=html;
+ let q=questions[current];
+ question.innerText=q.q;
+ options.innerHTML=q.options.map(o=>`<button onclick="answer('${o}')">${o}</button>`).join("");
 }
 
-// ANSWER
-window.answer = async(ans)=>{
-  if(ans===questions[current].answer) points+=25;
-  current++;
+/* ANSWER */
+window.answer=async(ans)=>{
+ if(ans===questions[current].answer) points+=25;
+ current++;
 
-  if(current<questions.length){
-    showQuestion();
-  } else {
-    show("home");
+ if(current<questions.length){
+  showQuestion();
+ } else {
+  show("home");
+
+  let refUser=ref(db,"users/"+user.uid);
+  let snap=await get(refUser);
+  let old=snap.val().score||0;
+
+  if(points>old){
+    await update(refUser,{score:points});
+    await set(ref(db,"leaderboard/"+user.uid),{
+      username:snap.val().username,
+      score:points
+    });
   }
+ }
 
-  score.innerText="Points: "+points;
+ score.innerText="Points: "+points;
 };
 
-// TIMER
+/* LEADERBOARD */
+onValue(ref(db,"leaderboard"), snap=>{
+ let html="";
+ snap.forEach(c=>{
+  let d=c.val();
+  html+=`<li>${d.username} - ${d.score}</li>`;
+ });
+ leaderboard.innerHTML=html;
+});
+
+/* GLOBAL TIMER */
 setInterval(()=>{
-  let now=Math.floor(Date.now()/1000);
-  let r=300-(now%300);
-  timer.innerText="Refresh in "+Math.floor(r/60)+":"+String(r%60).padStart(2,"0");
+ let now=Math.floor(Date.now()/1000);
+ let r=300-(now%300);
+ timer.innerText="Refresh in "+Math.floor(r/60)+":"+String(r%60).padStart(2,"0");
 },1000);
+
+/* UI */
+window.toggleMenu=()=>menuBox.classList.toggle("hidden");
+window.openProfile=()=>profilePage.style.display="block";
+window.closeProfile=()=>profilePage.style.display="none";
+window.goHome=()=>profilePage.style.display="none";
 
 </script>
 
