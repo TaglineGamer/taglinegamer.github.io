@@ -12,6 +12,30 @@ body {
   color:white;
   text-align:center;
 }
+
+/* TOP BAR */
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  padding:10px;
+}
+.menu, .profileIcon{
+  font-size:22px;
+  cursor:pointer;
+}
+
+/* MENU */
+.menuBox{
+  position:absolute;
+  top:50px;
+  left:10px;
+  background:#1e293b;
+  padding:10px;
+  border-radius:10px;
+  display:none;
+}
+
+/* CARD */
 .card {
   background:#1e293b;
   padding:20px;
@@ -41,7 +65,18 @@ input {
 
 <body>
 
-<h2>🎮 Intier Gaming</h2>
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="menu" onclick="toggleMenu()">☰</div>
+  <div>🎮 Intier Gaming</div>
+  <div class="profileIcon" onclick="openProfile()">👤</div>
+</div>
+
+<!-- MENU -->
+<div class="menuBox" id="menuBox">
+  <p onclick="goHome()">🏠 Home</p>
+  <p onclick="openProfile()">👤 Profile</p>
+</div>
 
 <!-- LOGIN -->
 <div class="card" id="login">
@@ -63,6 +98,14 @@ input {
 <div class="card hidden" id="home">
 <h3 id="welcome"></h3>
 <button onclick="startQuiz()">▶ Start Quiz</button>
+</div>
+
+<!-- PROFILE -->
+<div class="card hidden" id="profile">
+<h3>👤 Profile</h3>
+<p id="pEmail"></p>
+<p id="pUsername"></p>
+<p id="pScore"></p>
 <button onclick="logout()">Logout</button>
 </div>
 
@@ -76,12 +119,13 @@ input {
 <!-- LEADERBOARD -->
 <div class="card">
 <h3>🏆 Global Leaderboard</h3>
+<p id="timer"></p>
 <ul id="leaderboard"></ul>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-import { getDatabase, ref, push, onValue, set, get } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
+import { getDatabase, ref, push, onValue, set, get, update } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -95,89 +139,75 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
 
-let user = null;
-let points = 0;
-let current = 0;
+let user=null;
+let points=0;
+let current=0;
 
-const questions = [
- {q:"2+2?", options:["3","4","5"], answer:"4"},
- {q:"Capital of India?", options:["Delhi","Mumbai"], answer:"Delhi"},
- {q:"3x3?", options:["6","9"], answer:"9"}
-];
+// MENU
+window.toggleMenu=()=>{
+ menuBox.style.display = menuBox.style.display==="block"?"none":"block";
+}
 
-// UI SWITCH
+// UI
 function show(id){
- ["login","usernameCard","home","game"].forEach(i=>{
+ ["login","usernameCard","home","game","profile"].forEach(i=>{
   document.getElementById(i).classList.add("hidden");
  });
  document.getElementById(id).classList.remove("hidden");
 }
 
-// AUTH STATE
+// AUTH
 onAuthStateChanged(auth, async(u)=>{
  if(u){
-  user = u;
+  user=u;
   checkUsername();
  } else {
   show("login");
  }
 });
 
-// CHECK USERNAME
+// USERNAME CHECK
 async function checkUsername(){
- const snap = await get(ref(db,"users/"+user.uid));
+ const snap=await get(ref(db,"users/"+user.uid));
  if(snap.exists()){
-  document.getElementById("welcome").innerText="Welcome "+snap.val().username;
+  const data=snap.val();
+  welcome.innerText="Welcome "+data.username;
   show("home");
  } else {
   show("usernameCard");
  }
 }
 
-// EMAIL AUTH
-window.signup = async ()=>{
+// AUTH FUNCTIONS
+window.signup=async()=>{
  try{
   await createUserWithEmailAndPassword(auth,email.value,password.value);
- }catch(e){
-  alert(e.message);
- }
+ }catch(e){alert(e.message)}
 }
 
-window.login = async ()=>{
+window.login=async()=>{
  try{
   await signInWithEmailAndPassword(auth,email.value,password.value);
- }catch(e){
-  alert(e.message);
- }
+ }catch(e){alert(e.message)}
 }
 
-window.logout = ()=>signOut(auth);
+window.logout=()=>signOut(auth);
 
-// USERNAME SYSTEM
-window.saveUsername = async ()=>{
- let uname = username.value.trim();
+// USERNAME SAVE
+window.saveUsername=async()=>{
+ let uname=username.value.trim();
+ if(!uname.startsWith("@")) uname="@"+uname;
 
- if(!uname.startsWith("@")) uname = "@"+uname;
+ if(uname.includes(" ")){alert("No spaces");return;}
+ if(!/^@[a-zA-Z0-9_]+$/.test(uname)){alert("Invalid");return;}
 
- if(uname.includes(" ")){
-  alert("No spaces allowed");
-  return;
- }
-
- if(!/^@[a-zA-Z0-9_]+$/.test(uname)){
-  alert("Only letters, numbers, _ allowed");
-  return;
- }
-
- const check = await get(ref(db,"usernames/"+uname));
- if(check.exists()){
-  alert("Username already taken");
-  return;
- }
+ const check=await get(ref(db,"usernames/"+uname));
+ if(check.exists()){alert("Taken");return;}
 
  await set(ref(db,"users/"+user.uid),{
-  username: uname,
-  score: 0
+  username:uname,
+  email:user.email,
+  score:0
  });
 
  await set(ref(db,"usernames/"+uname),user.uid);
@@ -185,8 +215,28 @@ window.saveUsername = async ()=>{
  checkUsername();
 }
 
+// PROFILE
+window.openProfile=async()=>{
+ const snap=await get(ref(db,"users/"+user.uid));
+ const data=snap.val();
+
+ pEmail.innerText="Email: "+data.email;
+ pUsername.innerText="Username: "+data.username;
+ pScore.innerText="Points: "+data.score;
+
+ show("profile");
+}
+
+window.goHome=()=>show("home");
+
 // GAME
-window.startQuiz = ()=>{
+const questions=[
+ {q:"2+2?",options:["3","4","5"],answer:"4"},
+ {q:"Capital of India?",options:["Delhi","Mumbai"],answer:"Delhi"},
+ {q:"3x3?",options:["6","9"],answer:"9"}
+];
+
+window.startQuiz=()=>{
  points=0;
  current=0;
  show("game");
@@ -205,9 +255,8 @@ function showQuestion(){
  options.innerHTML=html;
 }
 
-window.checkAnswer = async(ans)=>{
+window.checkAnswer=async(ans)=>{
  if(ans===questions[current].answer) points+=25;
-
  current++;
 
  if(current<questions.length){
@@ -216,40 +265,58 @@ window.checkAnswer = async(ans)=>{
   question.innerText="🎉 Finished!";
   options.innerHTML="";
 
-  // GET USERNAME
-  const snap = await get(ref(db,"users/"+user.uid));
-  const uname = snap.val().username;
+  const snap=await get(ref(db,"users/"+user.uid));
+  const data=snap.val();
 
-  // SAVE SCORE WITH NAME
+  let newScore=(data.score||0)+points;
+
+  await update(ref(db,"users/"+user.uid),{
+    score:newScore
+  });
+
   await push(ref(db,"leaderboard"),{
-    username: uname,
-    score: points
+    username:data.username,
+    score:newScore
   });
  }
 
  score.innerText="Points: "+points;
 }
 
-// LEADERBOARD (SORTED + NAME)
-onValue(ref(db,"leaderboard"),snap=>{
- let arr=[];
+// LEADERBOARD
+function loadLeaderboard(){
+ onValue(ref(db,"leaderboard"),snap=>{
+  let arr=[];
+  snap.forEach(child=>arr.push(child.val()));
 
- snap.forEach(child=>{
-  arr.push(child.val());
+  arr.sort((a,b)=>b.score-a.score);
+
+  let html="";
+  arr.slice(0,10).forEach(d=>{
+   html+=`<li>${d.username} - ${d.score}</li>`;
+  });
+
+  leaderboard.innerHTML=html;
  });
+}
+loadLeaderboard();
 
- // SORT HIGH TO LOW
- arr.sort((a,b)=>b.score-a.score);
+// TIMER (5 min)
+let time=300;
 
- let html="";
- arr.forEach(data=>{
-  html+=`<li>${data.username} - ${data.score}</li>`;
- });
+setInterval(()=>{
+ time--;
+ let m=Math.floor(time/60);
+ let s=time%60;
+ timer.innerText="Refresh in "+m+":"+s;
 
- leaderboard.innerHTML=html;
-});
+ if(time<=0){
+  loadLeaderboard();
+  time=300;
+ }
+},1000);
 
 </script>
 
 </body>
-</html>
+  </html>
