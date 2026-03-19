@@ -17,7 +17,6 @@ body {
   background:#020617;
   display:flex;
   justify-content:space-between;
-  align-items:center;
 }
 .menu,.profileBtn{cursor:pointer;font-size:20px;}
 .card {
@@ -77,7 +76,6 @@ input {
   <p onclick="openProfile()">Profile</p>
 </div>
 
-<!-- LOGIN -->
 <div class="card" id="login">
   <h3>Login / Signup</h3>
   <input type="email" id="email" placeholder="Email">
@@ -86,34 +84,29 @@ input {
   <button onclick="loginUser()">Login</button>
 </div>
 
-<!-- USERNAME -->
 <div class="card hidden" id="usernameBox">
   <h3>Create Username</h3>
   <input id="usernameInput" placeholder="username">
   <button onclick="saveUsername()">Save</button>
 </div>
 
-<!-- HOME -->
 <div class="card hidden" id="home">
   <h3 id="welcome"></h3>
   <button onclick="startQuiz()">Start Quiz</button>
   <p id="timer"></p>
 </div>
 
-<!-- GAME -->
 <div class="card hidden" id="game">
   <h3 id="question"></h3>
   <div id="options"></div>
   <p id="score"></p>
 </div>
 
-<!-- LEADERBOARD -->
 <div class="card">
   <h3>🏆 Leaderboard</h3>
   <ul id="leaderboard"></ul>
 </div>
 
-<!-- PROFILE -->
 <div id="profilePage" class="profilePage">
   <h2>Profile</h2>
   <p id="pEmail"></p>
@@ -167,17 +160,13 @@ onAuthStateChanged(auth, async(u)=>{
 });
 
 window.signup=async()=>{
- try{
-  await createUserWithEmailAndPassword(auth,email.value,password.value);
-  alert("Signup successful");
- }catch(e){alert(e.message);}
+ try{ await createUserWithEmailAndPassword(auth,email.value,password.value);}
+ catch(e){alert(e.message);}
 };
 
 window.loginUser=async()=>{
- try{
-  await signInWithEmailAndPassword(auth,email.value,password.value);
-  alert("Login successful");
- }catch(e){alert(e.message);}
+ try{ await signInWithEmailAndPassword(auth,email.value,password.value);}
+ catch(e){alert(e.message);}
 };
 
 window.logout=()=>signOut(auth);
@@ -185,7 +174,7 @@ window.logout=()=>signOut(auth);
 /* USERNAME */
 window.saveUsername=async()=>{
  let uname=usernameInput.value.trim();
- if(uname.includes(" ")) return alert("No spaces allowed");
+ if(uname.includes(" ")) return alert("No spaces");
  uname="@"+uname;
 
  await set(ref(db,"users/"+user.uid),{
@@ -196,11 +185,11 @@ window.saveUsername=async()=>{
  show("home");
 };
 
-/* QUESTIONS (50 AUTO GENERATED) */
+/* QUESTIONS (50) */
 let questions = Array.from({length:50},(_,i)=>({
-  q:`Question ${i+1}: ${i+1}+1?`,
-  options:[`${i+2}`,`${i+3}`,`${i}`],
-  answer:`${i+2}`
+ q:`Question ${i+1}: ${i+1}+1?`,
+ options:[`${i+2}`,`${i+3}`,`${i}`],
+ answer:`${i+2}`
 }));
 
 /* START QUIZ */
@@ -218,27 +207,34 @@ function showQuestion(){
  options.innerHTML=q.options.map(o=>`<button onclick="answer('${o}')">${o}</button>`).join("");
 }
 
-/* ANSWER */
+/* LIVE POINT UPDATE */
 window.answer=async(ans)=>{
- if(ans===questions[current].answer) points+=25;
+
+ if(ans===questions[current].answer){
+
+   let refUser=ref(db,"users/"+user.uid);
+   let snap=await get(refUser);
+   let old=snap.val().score||0;
+
+   let newScore=old+25;
+
+   await update(refUser,{score:newScore});
+
+   await set(ref(db,"leaderboard/"+user.uid),{
+     username:snap.val().username,
+     score:newScore
+   });
+
+   pScore.innerText="Score: "+newScore;
+   points+=25;
+ }
+
  current++;
 
  if(current<questions.length){
   showQuestion();
  } else {
   show("home");
-
-  let refUser=ref(db,"users/"+user.uid);
-  let snap=await get(refUser);
-  let old=snap.val().score||0;
-
-  if(points>old){
-    await update(refUser,{score:points});
-    await set(ref(db,"leaderboard/"+user.uid),{
-      username:snap.val().username,
-      score:points
-    });
-  }
  }
 
  score.innerText="Points: "+points;
@@ -254,7 +250,7 @@ onValue(ref(db,"leaderboard"), snap=>{
  leaderboard.innerHTML=html;
 });
 
-/* GLOBAL TIMER */
+/* TIMER */
 setInterval(()=>{
  let now=Math.floor(Date.now()/1000);
  let r=300-(now%300);
@@ -270,4 +266,4 @@ window.goHome=()=>profilePage.style.display="none";
 </script>
 
 </body>
-</html>
+  </html>
