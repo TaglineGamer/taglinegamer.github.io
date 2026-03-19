@@ -651,6 +651,149 @@ window.switchTab=(tab)=>{
 };
 function showAlert(el,msg){el.textContent=msg;el.classList.add("show");}
 function toast(msg,type){const t=document.getElementById("toast");t.textContent=msg;t.className="show "+type;setTimeout(()=>t.className="",3000);}
+    const ADMIN_UID = "PASTE_YOUR_UID_HERE";
+
+const PAYOUT_OPTIONS = [
+  { id:"gplay_10",  label:"₹10 Google Play",  platform:"gplay",  amount:10, cost:10000 },
+  { id:"gplay_20",  label:"₹20 Google Play",  platform:"gplay",  amount:20, cost:20000 },
+  { id:"gplay_50",  label:"₹50 Google Play",  platform:"gplay",  amount:50, cost:50000 },
+  { id:"amazon_10", label:"₹10 Amazon",        platform:"amazon", amount:10, cost:10000 },
+  { id:"amazon_20", label:"₹20 Amazon",        platform:"amazon", amount:20, cost:20000 },
+  { id:"amazon_50", label:"₹50 Amazon",        platform:"amazon", amount:50, cost:50000 },
+];
+
+let currentPlatform="gplay", pendingRedeem=null;
+
+window.openPayout=()=>{
+  closeSidebar();
+  const score=(userData&&userData.score)||0;
+  document.getElementById("payoutScore").textContent=score;
+  renderPayoutCards(score);
+  document.getElementById("payoutPage").classList.add("open");
+};
+window.closePayout=()=>document.getElementById("payoutPage").classList.remove("open");
+
+window.switchPlatform=(platform)=>{
+  currentPlatform=platform;
+  document.getElementById("tabGPlay").className="platform-tab"+(platform==="gplay"?" active":"");
+  document.getElementById("tabAmazon").className="platform-tab"+(platform==="amazon"?" active":"");
+  renderPayoutCards((userData&&userData.score)||0);
+};
+
+function renderPayoutCards(score){
+  const options=PAYOUT_OPTIONS.filter(o=>o.platform===currentPlatform);
+  document.getElementById("payoutCards").innerHTML=options.map(opt=>{
+    const can=score>=opt.cost;
+    const lacking=opt.cost-score;
+    return `<div class="payout-card ${can?"unlocked":"locked"}">
+      <div class="payout-card-left">
+        <h4>${opt.platform==="gplay"?"🎮":"📦"} ₹${opt.amount} ${opt.platform==="gplay"?"Google Play":"Amazon"}</h4>
+        <p>${opt.cost.toLocaleString()} points required</p>
+        ${can?`<div class="ready">✅ YOU CAN REDEEM THIS!</div>`:`<div class="need">Need ${lacking.toLocaleString()} more points</div>`}
+      </div>
+      <button class="btn-redeem ${can?"active":"disabled"}" ${can?`onclick="askConfirm('${opt.id}')"`:"disabled"}>REDEEM</button>
+    </div>`;
+  }).join("");
+}
+
+window.askConfirm=(optId)=>{
+  const opt=PAYOUT_OPTIONS.find(o=>o.id===optId);
+  if(!opt)return;
+  pendingRedeem=opt;
+  document.getElementById("confirmText").textContent=`Redeem ${opt.cost.toLocaleString()} points for a ₹${opt.amount} ${opt.platform==="gplay"?"Google Play":"Amazon"} gift card?`;
+  document.getElementById("confirmYesBtn").onclick=()=>doRedeem(opt);
+  document.getElementById("confirmOverlay").classList.add("open");
+};
+window.closeConfirm=()=>{document.getElementById("confirmOverlay").classList.remove("open");pendingRedeem=null;};
+
+async function doRedeem(opt){
+  closeConfirm();
+  if(!user||!userData)return;
+  const score=(userData&&userData.score)||0;
+  if(score<opt.cost){toast("Not enough points!","bad");return;}
+  try{
+    await runTransaction(ref(db,"users/"+user.uid+"/score"),cur=>{
+      if((cur||0)<opt.cost)return;
+      return(cur||0)-opt.cost;
+    });
+    const newSnap=await get(ref(db,"users/"+user.uid+"/score"));
+    const newScore=newSnap.exists()?newSnap.val():0;
+    await update(ref(db,"leaderboard/"+user.uid),{score:newScore});
+    const reqId="req_"+Date.now();
+    await set(ref(db,"payouts/"+reqId),{
+      uid:user.uid,
+      username:userData.username,
+      email:userData.email||user.email,
+      platform:opt.platform,
+      amount:opt.amount,
+      cost:opt.cost,
+      label:opt.label,
+      status:"pending",
+      timestamp:Date.now()
+    });
+    toast("✅ Request submitted! Processing in 24-48hrs.","ok");
+    document.getElementById("payoutScore").textContent=newScore;
+    renderPayoutCards(newScore);
+  }catch(e){toast("Error submitting. Try again.","bad");}
+}
+
+let adminTaps=0,adminTimer=null;
+window.adminTap=()=>{
+  adminTaps++;
+  clearTimeout(adminTimer);
+  adminTimer=setTimeout(()=>adminTaps=0,2000);
+  if(adminTaps>=5){
+    adminTaps=0;
+    if(user&&user.uid===ADMIN_UID)openAdmin();
+    else toast("Access denied 🚫","bad");
+  }
+};
+
+window.openAdmin=()=>{
+  document.getElementById("adminPage").classList.add("open");
+  loadAdminPayouts();
+};
+window.closeAdmin=()=>document.getElementById("adminPage").classList.remove("open");
+
+function loadAdminPayouts(){
+  onValue(ref(db,"payouts"),snap=>{
+    const list=[];
+    snap.forEach(c=>list.push({id:c.key,...c.val()}));
+    list.sort((a,b)=>b.timestamp-a.timestamp);
+    const el=document.getElementById("adminPayoutList");
+    if(!list.length){el.innerHTML=`<p style="color:var(--muted);text-align:center;padding:30px;">No payout requests yet.</p>`;return;}
+    el.innerHTML=list.map(r=>{
+      const date=new Date(r.timestamp).toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"});
+      const sc=r.status==="approved"?"status-approved":r.status==="rejected"?"status-rejected":"status-pending";
+      const st=r.status==="approved"?"✅ APPROVED":r.status==="rejected"?"❌ REJECTED":"⏳ PENDING";
+      return `<div class="admin-req-card">
+        <h4>${r.username}</h4>
+        <p class="req-detail">🎁 ${r.label} &nbsp;|&nbsp; 📧 ${r.email}</p>
+        <p class="req-detail">🕐 ${date}</p>
+        <div class="status-badge ${sc}">${st}</div>
+        ${r.status==="pending"?`<div class="admin-btns">
+          <button class="btn-approve" onclick="approveRequest('${r.id}')">✅ APPROVE</button>
+          <button class="btn-reject" onclick="rejectRequest('${r.id}')">❌ REJECT</button>
+        </div>`:""}
+      </div>`;
+    }).join("");
+  });
+}
+
+window.approveRequest=async(reqId)=>{
+  await update(ref(db,"payouts/"+reqId),{status:"approved"});
+  toast("Request approved ✅","ok");
+};
+window.rejectRequest=async(reqId)=>{
+  const snap=await get(ref(db,"payouts/"+reqId));
+  if(!snap.exists())return;
+  const r=snap.val();
+  await runTransaction(ref(db,"users/"+r.uid+"/score"),cur=>(cur||0)+r.cost);
+  const ns=await get(ref(db,"users/"+r.uid+"/score"));
+  if(ns.exists())await update(ref(db,"leaderboard/"+r.uid),{score:ns.val()});
+  await update(ref(db,"payouts/"+reqId),{status:"rejected"});
+  toast("Rejected. Points refunded ↩️","bad");
+};
 function friendlyErr(code){const m={"auth/user-not-found":"No account with this email.","auth/wrong-password":"Incorrect password.","auth/invalid-credential":"Invalid email or password.","auth/email-already-in-use":"Email already registered.","auth/invalid-email":"Invalid email address.","auth/weak-password":"Password must be at least 6 characters.","auth/network-request-failed":"Network error. Check your connection.","auth/too-many-requests":"Too many attempts. Try again later."};return m[code]||"Something went wrong. Please try again.";}
 </script>
 </body>
