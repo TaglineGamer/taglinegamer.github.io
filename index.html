@@ -460,8 +460,7 @@ const ADMIN_UID="k5Ott7K9tUU2dkFbwMu9DAeBdJ72";
 
 function show(id){["login","usernameBox","home","game"].forEach(i=>{const e=document.getElementById(i);if(e)e.classList.add("hidden");});const t=document.getElementById(id);if(t)t.classList.remove("hidden");}
 
-onAuthStateChanged(auth,async(u)=>{if(u){user=u;const s=await get(ref(db,"users/"+u.uid));if(s.exists()){userData=s.val();enterApp();}else show("usernameBox");}else{user=null;userData=null;show("login");document.getElementById("navScore").style.display="none";}});
-
+onAuthStateChanged(auth,async(u)=>{if(u){user=u;const s=await get(ref(db,"users/"+u.uid));if(s.exists()){userData=s.val();if(userData.banned){await signOut(auth);alert("❌ Your account has been banned. Contact support.");return;}enterApp();}else show("usernameBox");}else{user=null;userData=null;show("login");document.getElementById("navScore").style.display="none";}});
 window.signup=async()=>{const e=document.getElementById("emailS").value.trim(),p=document.getElementById("passwordS").value,err=document.getElementById("signupErr"),ok=document.getElementById("signupOk");err.classList.remove("show");ok.classList.remove("show");if(!e||!p){showAlert(err,"Fill in all fields.");return;}try{await createUserWithEmailAndPassword(auth,e,p);showAlert(ok,"Account created! Now set your username.");}catch(ex){showAlert(err,friendlyErr(ex.code));}};
 
 window.loginUser=async()=>{const e=document.getElementById("email").value.trim(),p=document.getElementById("password").value,err=document.getElementById("loginErr");err.classList.remove("show");if(!e||!p){showAlert(err,"Fill in all fields.");return;}try{await signInWithEmailAndPassword(auth,e,p);}catch(ex){showAlert(err,friendlyErr(ex.code));}};
