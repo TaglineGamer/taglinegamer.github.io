@@ -372,7 +372,18 @@
     </div>
   </div>
 </div>
-<div id="toast"></div>
+<div class="notif-page" id="notifPage">
+  <div class="notif-inner">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+      <div style="font-family:'Orbitron',monospace;font-size:18px;font-weight:900;color:var(--accent);">🔔 NOTIFICATIONS</div>
+      <button class="iconBtn" onclick="closeNotif()">✕</button>
+    </div>
+    <div id="notifList">
+      <p style="color:var(--muted);text-align:center;padding:40px;">No notifications yet.</p>
+    </div>
+  </div>
+</div>
+  <div id="toast"></div>
 
 
 
