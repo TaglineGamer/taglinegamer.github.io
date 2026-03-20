@@ -548,5 +548,10 @@ function loadNotifications(){if(!user)return;onValue(ref(db,"notifications/"+use
 function toast(msg,type){const t=document.getElementById("toast");t.textContent=msg;t.className="show "+type;setTimeout(()=>t.className="",3000);}
 function friendlyErr(code){const m={"auth/user-not-found":"No account with this email.","auth/wrong-password":"Incorrect password.","auth/invalid-credential":"Invalid email or password.","auth/email-already-in-use":"Email already registered.","auth/invalid-email":"Invalid email address.","auth/weak-password":"Password must be at least 6 characters.","auth/network-request-failed":"Network error. Check your connection.","auth/too-many-requests":"Too many attempts. Try again later."};return m[code]||"Something went wrong. Please try again.";}
 </script>
+  <div style="text-align:center;padding:20px 16px;border-top:1px solid #1a2a40;margin-top:20px;">
+  <a href="/privacy-policy.html" style="color:#00e5ff;text-decoration:none;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;letter-spacing:1px;margin:0 10px;">PRIVACY POLICY</a>
+  <span style="color:#4a6080;">|</span>
+  <a href="/terms.html" style="color:#00e5ff;text-decoration:none;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;letter-spacing:1px;margin:0 10px;">TERMS & CONDITIONS</a>
+  </div>
 </body>
 </html>
