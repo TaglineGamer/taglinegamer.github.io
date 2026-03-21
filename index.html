@@ -471,8 +471,8 @@ window.fmtUser=(inp)=>{let v=inp.value.replace(/[^@a-zA-Z0-9_]/g,"");if(!v.start
 
 window.saveUsername=async()=>{const uname=document.getElementById("usernameInput").value.trim(),err=document.getElementById("unErr"),ok=document.getElementById("unOk");err.classList.remove("show");ok.classList.remove("show");if(!uname.startsWith("@")||uname.length<2){showAlert(err,"Must start with @ and have at least 1 char.");return;}if(!/^@[a-zA-Z0-9_]+$/.test(uname)){showAlert(err,"Only letters, numbers, underscores.");return;}if(uname.length>20){showAlert(err,"Max 20 characters.");return;}const taken=await get(ref(db,"usernames/"+uname));if(taken.exists()){showAlert(err,"Username taken. Try another!");return;}await set(ref(db,"users/"+user.uid),{username:uname,email:user.email,score:0});await set(ref(db,"usernames/"+uname),user.uid);await set(ref(db,"leaderboard/"+user.uid),{username:uname,score:0});userData={username:uname,email:user.email,score:0};showAlert(ok,"Welcome, "+uname+"!");setTimeout(()=>enterApp(),900);};
 
-function enterApp(){document.getElementById("navScore").style.display="block";updateNavUI();show("home");listenScore();startLeaderboard();loadNotifications();}
-
+function enterApp(){document.getElementById("navScore").style.display="block";updateNavUI();show("home");listenScore();startLeaderboard();loadNotifications();checkBooster();}
+  
 function fmtPts(n){return Number(n||0).toLocaleString('en-IN');}
 
 function updateNavUI(){if(!userData)return;document.getElementById("navScoreVal").textContent=fmtPts(userData.score);document.getElementById("sbUsername").textContent=userData.username||"—";document.getElementById("sbEmail").textContent=userData.email||user?.email||"—";document.getElementById("welcome").textContent="WELCOME BACK, "+(userData.username||"");document.getElementById("homeScore").textContent=fmtPts(userData.score);}
