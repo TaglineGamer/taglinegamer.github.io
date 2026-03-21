@@ -14,7 +14,7 @@
   * { box-sizing:border-box; margin:0; padding:0; }
   body { background:var(--bg); color:var(--text); font-family:'Rajdhani',sans-serif; font-size:16px; min-height:100vh; }
   body::before { content:''; position:fixed; inset:0; background-image:linear-gradient(rgba(0,229,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,0.025) 1px,transparent 1px); background-size:44px 44px; pointer-events:none; z-index:0; }
-  .header { position:fixed; top:0; left:0; right:0; height:56px; background:rgba(8,12,20,0.97); backdrop-filter:blur(10px); border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; padding:0 16px; z-index:900; }
+.header { position:fixed; top:0; left:0; right:0; height:56px; background:rgba(8,12,20,0.97); backdrop-filter:blur(10px); border-bottom:1px solid var(--border); display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:12px; padding:0 16px; z-index:900; }
   .logo { font-family:'Orbitron',monospace; font-size:17px; font-weight:900; color:var(--accent); letter-spacing:2px; text-shadow:0 0 18px rgba(0,229,255,0.45); }
   .logo span { color:var(--accent2); }
   .nav-right { display:flex; align-items:center; gap:10px; }
