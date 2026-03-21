@@ -475,7 +475,7 @@ function enterApp(){document.getElementById("navScore").style.display="block";up
 
 function fmtPts(n){return Number(n||0).toLocaleString('en-IN');}
 
-function updateNavUI(){if(!userData)return;document.getElementById("navScoreVal").textContent=userData.score||0;document.getElementById("sbUsername").textContent=userData.username||"—";document.getElementById("sbEmail").textContent=userData.email||user?.email||"—";document.getElementById("welcome").textContent="WELCOME BACK, "+(userData.username||"");document.getElementById("homeScore").textContent=userData.score||0;}
+function updateNavUI(){if(!userData)return;document.getElementById("navScoreVal").textContent=fmtPts(userData.score);document.getElementById("sbUsername").textContent=userData.username||"—";document.getElementById("sbEmail").textContent=userData.email||user?.email||"—";document.getElementById("welcome").textContent="WELCOME BACK, "+(userData.username||"");document.getElementById("homeScore").textContent=fmtPts(userData.score);}
 
 function listenScore(){onValue(ref(db,"users/"+user.uid+"/score"),snap=>{if(!snap.exists())return;const s=snap.val();if(userData)userData.score=s;document.getElementById("navScoreVal").textContent=s;document.getElementById("homeScore").textContent=s;document.getElementById("pScore").textContent=s;});}
 
