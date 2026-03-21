@@ -324,6 +324,23 @@
       <div class="pts-badge">+25 PTS PER CORRECT ANSWER</div>
       <button class="btn btn-primary" onclick="startQuiz()">▶ START QUIZ</button>
     </div>
+    <div class="booster-card">
+      <h3>⚡ POINTS BOOSTER</h3>
+      <p>Spend 50,000 points to earn DOUBLE points for 24 hours!</p>
+      <div class="booster-active" id="boosterActive">
+        <div class="booster-lbl">🔥 BOOST ACTIVE — TIME REMAINING</div>
+        <div class="booster-timer" id="boosterTimer">--:--:--</div>
+      </div>
+      <button class="btn" style="background:linear-gradient(135deg,var(--gold),#ff6400);color:#080c14;font-weight:900;letter-spacing:1px;" onclick="activateBooster()" id="boosterBtn">⚡ ACTIVATE BOOST — 50,000 PTS</button>
+    </div>
+    <div class="search-section">
+      <h3>🔍 SEARCH PLAYER</h3>
+      <div class="search-row">
+        <input type="text" id="searchInput" placeholder="@Username" oninput="fmtUser(this)">
+        <button onclick="searchUser()">SEARCH</button>
+      </div>
+      <div class="search-result" id="searchResult"></div>
+    </div>
   </div>
   <div class="hidden" id="game">
     <div class="q-header">
