@@ -477,7 +477,7 @@ function fmtPts(n){return Number(n||0).toLocaleString('en-IN');}
 
 function updateNavUI(){if(!userData)return;document.getElementById("navScoreVal").textContent=fmtPts(userData.score);document.getElementById("sbUsername").textContent=userData.username||"—";document.getElementById("sbEmail").textContent=userData.email||user?.email||"—";document.getElementById("welcome").textContent="WELCOME BACK, "+(userData.username||"");document.getElementById("homeScore").textContent=fmtPts(userData.score);}
 
-function listenScore(){onValue(ref(db,"users/"+user.uid+"/score"),snap=>{if(!snap.exists())return;const s=snap.val();if(userData)userData.score=s;document.getElementById("navScoreVal").textContent=s;document.getElementById("homeScore").textContent=s;document.getElementById("pScore").textContent=s;});}
+function listenScore(){onValue(ref(db,"users/"+user.uid+"/score"),snap=>{if(!snap.exists())return;const s=snap.val();if(userData)userData.score=s;document.getElementById("navScoreVal").textContent=fmtPts(s);document.getElementById("homeScore").textContent=fmtPts(s);document.getElementById("pScore").textContent=fmtPts(s);});}
 
 function startLeaderboard(){document.getElementById("leaderboard").innerHTML=`<div style="text-align:center;padding:30px 10px;"><div style="font-size:40px;margin-bottom:12px;">🚧</div><div style="font-family:'Orbitron',monospace;font-size:16px;font-weight:900;color:var(--accent);letter-spacing:2px;margin-bottom:8px;">COMING SOON</div><p style="color:var(--muted);font-size:13px;">Leaderboard is currently under construction.<br>Keep playing and earning points!</p></div>`;}
 
